@@ -30,11 +30,6 @@ export function Navbar() {
           <Link to="/products" className="text-muted-foreground hover:text-foreground transition-colors">
             Products
           </Link>
-          {user?.is_superuser && (
-            <Link to="/admin" className="text-muted-foreground hover:text-foreground transition-colors">
-              Admin
-            </Link>
-          )}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -67,9 +62,6 @@ export function Navbar() {
                 <div className="px-2 pb-1.5 text-xs text-muted-foreground">{user?.email}</div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate("/orders")}>Order History</DropdownMenuItem>
-                {user?.is_superuser && (
-                  <DropdownMenuItem onClick={() => navigate("/admin")}>Admin Dashboard</DropdownMenuItem>
-                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => logout()}>Sign Out</DropdownMenuItem>
               </DropdownMenuContent>

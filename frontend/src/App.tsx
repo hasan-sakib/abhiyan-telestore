@@ -2,12 +2,10 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { AdminLayout } from "@/components/layout/AdminLayout";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
-import { AdminRoute } from "@/components/shared/AdminRoute";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Home = lazy(() => import("@/pages/Home"));
@@ -21,11 +19,6 @@ const Login = lazy(() => import("@/pages/auth/Login"));
 const Register = lazy(() => import("@/pages/auth/Register"));
 const ForgotPassword = lazy(() => import("@/pages/auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword"));
-const AdminDashboard = lazy(() => import("@/pages/admin/Dashboard"));
-const AdminProductList = lazy(() => import("@/pages/admin/ProductList"));
-const ProductForm = lazy(() => import("@/pages/admin/ProductForm"));
-const CategoryManager = lazy(() => import("@/pages/admin/CategoryManager"));
-const OrderManager = lazy(() => import("@/pages/admin/OrderManager"));
 
 function PageLoader() {
   return (
@@ -67,24 +60,6 @@ export default function App() {
               <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
               <Route path="orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
               <Route path="orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-            </Route>
-
-            <Route
-              path="admin"
-              element={
-                <ProtectedRoute>
-                  <AdminRoute>
-                    <AdminLayout />
-                  </AdminRoute>
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProductList />} />
-              <Route path="products/new" element={<ProductForm />} />
-              <Route path="products/:slug/edit" element={<ProductForm />} />
-              <Route path="categories" element={<CategoryManager />} />
-              <Route path="orders" element={<OrderManager />} />
             </Route>
           </Routes>
         </Suspense>

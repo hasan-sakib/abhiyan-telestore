@@ -25,7 +25,11 @@ class Settings(BaseSettings):
     MAIL_PORT: int = 587
 
     FRONTEND_URL: str = "http://localhost:5173"
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:5173"]
+    ADMIN_FRONTEND_URL: str = "http://localhost:5174"
+    BACKEND_CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+    ]
 
 
 settings = Settings()
