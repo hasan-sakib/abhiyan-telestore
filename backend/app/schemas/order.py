@@ -10,7 +10,7 @@ class ShippingAddress(BaseModel):
     address_line1: str
     address_line2: Optional[str] = None
     city: str
-    state: str
+    state: Optional[str] = None
     postal_code: str
     country: str = "Bangladesh"
 
