@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select, func, or_
 from app.database import get_db
-from app.dependencies.auth import require_admin
+from app.dependencies.auth import require_admin, require_superuser
 from app.models.user import User
 from app.core.security import get_password_hash
 from app.schemas.admin_user import (
@@ -32,7 +32,7 @@ def list_users(
 def create_user(
     payload: AdminUserCreate,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_superuser),
 ):
     if db.exec(select(User).where(User.email == payload.email)).first():
         raise HTTPException(status_code=400, detail="Email already in use")
@@ -40,6 +40,7 @@ def create_user(
         email=payload.email,
         full_name=payload.full_name,
         hashed_password=get_password_hash(payload.password),
+        is_admin=payload.is_admin,
         is_superuser=payload.is_superuser,
         is_active=payload.is_active,
     )
@@ -54,7 +55,7 @@ def update_user(
     user_id: int,
     payload: AdminUserUpdate,
     db: Session = Depends(get_db),
-    current: User = Depends(require_admin),
+    current: User = Depends(require_superuser),
 ):
     user = db.get(User, user_id)
     if not user:
@@ -82,7 +83,7 @@ def update_user(
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current: User = Depends(require_admin),
+    current: User = Depends(require_superuser),
 ):
     user = db.get(User, user_id)
     if not user:

@@ -17,6 +17,7 @@ export const userCreateSchema = z.object({
   full_name: z.string().min(1).max(255),
   email: z.string().email(),
   password: z.string().min(8, "At least 8 characters"),
+  is_admin: z.boolean(),
   is_superuser: z.boolean(),
   is_active: z.boolean(),
 });
@@ -25,6 +26,7 @@ export type UserCreateInput = z.infer<typeof userCreateSchema>;
 export const userEditSchema = z.object({
   full_name: z.string().min(1).max(255),
   email: z.string().email(),
+  is_admin: z.boolean(),
   is_superuser: z.boolean(),
   is_active: z.boolean(),
   password: z.string().min(8).optional().or(z.literal("")),

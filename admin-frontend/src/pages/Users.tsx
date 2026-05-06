@@ -31,6 +31,7 @@ interface AdminUser {
   email: string;
   full_name: string;
   is_active: boolean;
+  is_admin: boolean;
   is_superuser: boolean;
   created_at: string;
 }
@@ -80,9 +81,11 @@ export default function Users() {
             <CardTitle>Users</CardTitle>
             <CardDescription>Manage user accounts and permissions</CardDescription>
           </div>
-          <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4" /> Add User
-          </Button>
+          {me?.is_superuser && (
+            <Button onClick={() => setCreateOpen(true)}>
+              <Plus className="h-4 w-4" /> Add User
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative max-w-sm">
@@ -125,7 +128,9 @@ export default function Users() {
                     <TableCell>
                       {u.is_superuser
                         ? <Badge>Superuser</Badge>
-                        : <Badge variant="secondary">User</Badge>}
+                        : u.is_admin
+                          ? <Badge variant="outline">Admin</Badge>
+                          : <Badge variant="secondary">User</Badge>}
                     </TableCell>
                     <TableCell>
                       <span className="inline-flex items-center gap-1.5">
@@ -134,22 +139,24 @@ export default function Users() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onSelect={() => setEditing(u)}>Edit</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            variant="destructive"
-                            disabled={u.id === me?.id}
-                            onSelect={() => setDeleting(u)}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      {me?.is_superuser ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => setEditing(u)}>Edit</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              disabled={u.id === me?.id}
+                              onSelect={() => setDeleting(u)}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -201,7 +208,7 @@ function CreateUserDialog({
 }: { open: boolean; onOpenChange: (v: boolean) => void; onSaved: () => void }) {
   const form = useForm<UserCreateInput>({
     resolver: zodResolver(userCreateSchema),
-    defaultValues: { is_superuser: false, is_active: true, full_name: "", email: "", password: "" },
+    defaultValues: { is_admin: false, is_superuser: false, is_active: true, full_name: "", email: "", password: "" },
   });
 
   const mutation = useMutation({
@@ -241,6 +248,9 @@ function CreateUserDialog({
           </div>
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2 text-sm">
+              <Checkbox {...form.register("is_admin")} /> Admin
+            </label>
+            <label className="flex items-center gap-2 text-sm">
               <Checkbox {...form.register("is_superuser")} /> Superuser
             </label>
             <label className="flex items-center gap-2 text-sm">
@@ -265,7 +275,7 @@ function EditUserDialog({
   const form = useForm<UserEditInput>({
     resolver: zodResolver(userEditSchema),
     values: user
-      ? { full_name: user.full_name, email: user.email, is_superuser: user.is_superuser, is_active: user.is_active, password: "" }
+      ? { full_name: user.full_name, email: user.email, is_admin: user.is_admin, is_superuser: user.is_superuser, is_active: user.is_active, password: "" }
       : undefined,
   });
 
@@ -305,6 +315,9 @@ function EditUserDialog({
             {form.formState.errors.password && <p className="text-xs text-destructive">{form.formState.errors.password.message}</p>}
           </div>
           <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 text-sm">
+              <Checkbox {...form.register("is_admin")} /> Admin
+            </label>
             <label className="flex items-center gap-2 text-sm">
               <Checkbox {...form.register("is_superuser")} /> Superuser
             </label>

@@ -20,7 +20,7 @@ export function useLogin() {
       });
       useAuthStore.setState({ accessToken: tokens.access_token });
       const user = await apiFetch<AuthUser>("/api/v1/users/me");
-      if (!user.is_superuser) {
+      if (!user.is_admin && !user.is_superuser) {
         useAuthStore.getState().logout();
         throw new ApiError(403, "This account is not authorized for the admin dashboard.");
       }
@@ -45,7 +45,7 @@ export function useSignup() {
       });
       useAuthStore.setState({ accessToken: tokens.access_token });
       const user = await apiFetch<AuthUser>("/api/v1/users/me");
-      if (!user.is_superuser) {
+      if (!user.is_admin && !user.is_superuser) {
         useAuthStore.getState().logout();
         throw new ApiError(
           403,

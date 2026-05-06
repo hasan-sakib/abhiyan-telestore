@@ -26,7 +26,7 @@ function PageLoader() {
 
 function AuthRedirect({ children }: { children: ReactNode }) {
   const { isAuthenticated, user } = useAuthStore();
-  if (isAuthenticated && user?.is_superuser) return <Navigate to="/" replace />;
+  if (isAuthenticated && (user?.is_admin || user?.is_superuser)) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 

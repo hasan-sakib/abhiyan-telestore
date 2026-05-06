@@ -8,7 +8,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  if (!user.is_superuser) {
+  if (!user.is_admin && !user.is_superuser) {
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
