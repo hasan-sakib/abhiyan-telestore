@@ -2,26 +2,29 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --background: 0 17% 98%;
+    --foreground: 0 2% 11%;
+    --card: 0 17% 98%;
+    --card-foreground: 0 2% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.5rem;
+    --popover-foreground: 0 2% 11%;
+    --primary: 239 64% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 242 100% 94%;
+    --secondary-foreground: 248 100% 21%;
+    --muted: 0 7% 93%;
+    --muted-foreground: 200 3% 27%;
+    --accent: 21 18% 88%;
+    --accent-foreground: 21 8% 39%;
+    --destructive: 0 75% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 200 3% 78%;
+    --input: 200 3% 78%;
+    --ring: 239 64% 55%;
+    --radius: 0.75rem;
+
+    --neu-light: #ffffff;
+    --neu-dark: #bebebe;
   }
 
   .dark {
@@ -31,8 +34,8 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
+    --primary: 239 64% 65%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 215 27.9% 16.9%;
     --secondary-foreground: 210 20% 98%;
     --muted: 215 27.9% 16.9%;
@@ -43,7 +46,10 @@
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 239 64% 65%;
+
+    --neu-light: #2a2f3a;
+    --neu-dark: #0e1116;
   }
 }
 
@@ -71,6 +77,7 @@
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
   --radius-xl: calc(var(--radius) + 8px);
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -81,7 +88,7 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     margin: 0;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   #root {
@@ -89,9 +96,56 @@
   }
 }
 
+.neumorphic-raised {
+  box-shadow: -6px -6px 12px var(--neu-light), 6px 6px 12px var(--neu-dark);
+}
+.neumorphic-raised-sm {
+  box-shadow: -3px -3px 6px var(--neu-light), 3px 3px 6px var(--neu-dark);
+}
+.neumorphic-inset {
+  box-shadow: inset -4px -4px 8px var(--neu-light),
+    inset 4px 4px 8px var(--neu-dark);
+}
+.neumorphic-pressed:active {
+  box-shadow: inset -4px -4px 8px var(--neu-light),
+    inset 4px 4px 8px var(--neu-dark);
+}
+.glass-panel {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+}
+.dark .glass-panel {
+  background: rgba(20, 22, 28, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .shimmer {

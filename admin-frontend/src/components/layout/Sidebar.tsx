@@ -1,45 +1,85 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Package, Users, ShoppingCart, FolderTree, Settings, Store } from "lucide-react";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
+import { useThemeStore } from "@/stores/themeStore";
+import { useLogout } from "@/hooks/useAuth";
 
 const items = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard", end: true },
-  { to: "/items", icon: Package, label: "Items" },
-  { to: "/categories", icon: FolderTree, label: "Categories" },
-  { to: "/orders", icon: ShoppingCart, label: "Orders" },
-  { to: "/admin", icon: Users, label: "Admin" },
-  { to: "/settings", icon: Settings, label: "Settings" },
+  { to: "/", icon: "dashboard", label: "Dashboard", end: true },
+  { to: "/items", icon: "inventory_2", label: "Inventory" },
+  { to: "/categories", icon: "category", label: "Categories" },
+  { to: "/orders", icon: "receipt_long", label: "Orders" },
+  { to: "/admin", icon: "group", label: "Customers" },
 ];
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar() {
+  const logout = useLogout();
+  const theme = useThemeStore((s) => s.theme);
+  const toggleTheme = useThemeStore((s) => s.toggle);
+
   return (
-    <aside className={cn("w-60 shrink-0 border-r bg-card flex flex-col", className)}>
-      <div className="flex items-center gap-2 px-5 h-16 border-b">
-        <Store className="h-6 w-6 text-primary" />
-        <span className="text-lg font-semibold tracking-tight">Telestore</span>
+    <aside className="hidden md:flex flex-col h-screen w-64 bg-surface p-6 sticky top-0 neu-raised rounded-r-xl z-40">
+      <div className="mb-8 px-2">
+        <h1 className="text-2xl font-bold text-secondary tracking-tight">ABIYAN</h1>
+        <p className="text-xs label-caps text-on-surface-variant mt-1">Systems Controller</p>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {items.map(({ to, icon: Icon, label, end }) => (
+
+      <nav className="grow space-y-3 overflow-y-auto">
+        {items.map(({ to, icon, label, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 p-3 rounded-lg transition-all duration-300",
                 isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  ? "neu-inset text-secondary font-bold"
+                  : "text-on-surface-variant hover:text-primary hover:scale-[1.02] hover:neu-raised-sm",
               )
             }
           >
-            <Icon className="h-4 w-4" />
-            {label}
+            <Icon name={icon} size={20} />
+            <span className="text-sm font-semibold">{label}</span>
           </NavLink>
         ))}
       </nav>
-      <div className="px-5 py-4 border-t text-xs text-muted-foreground">
-        Abiyan Telestore Admin
+
+      <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            cn(
+              "w-full flex items-center gap-3 p-3 rounded-lg transition-colors",
+              isActive
+                ? "text-secondary font-bold"
+                : "text-on-surface-variant hover:text-primary",
+            )
+          }
+        >
+          <Icon name="settings" size={20} />
+          <span className="text-sm font-semibold">Settings</span>
+        </NavLink>
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+        >
+          <Icon name={theme === "dark" ? "light_mode" : "dark_mode"} size={20} />
+          <span className="text-sm font-semibold">
+            {theme === "dark" ? "Light mode" : "Dark mode"}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={logout}
+          className="w-full flex items-center gap-3 p-3 rounded-lg text-destructive transition-colors hover:opacity-80"
+        >
+          <Icon name="logout" size={20} />
+          <span className="text-sm font-semibold">Logout</span>
+        </button>
       </div>
     </aside>
   );

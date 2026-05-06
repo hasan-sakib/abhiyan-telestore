@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "sonner";
 import App from "@/App";
 import "@/index.css";
+import "@/stores/themeStore";
 
 const queryClient = new QueryClient({
   defaultOptions: {
