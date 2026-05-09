@@ -8,7 +8,7 @@ WORKDIR /build
 
 # Copy package files first for better layer caching
 COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Copy source and build
 COPY frontend/ .

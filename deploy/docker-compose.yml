@@ -1,6 +1,8 @@
 # ── Abiyan Telestore – Docker Compose ─────────────────────────────────────────
 # Run the entire stack with:  docker compose -f deploy/docker-compose.yml up --build
 
+name: abiyan-telestore
+
 services:
   # ── PostgreSQL Database ───────────────────────────────────────────────────
   db:
