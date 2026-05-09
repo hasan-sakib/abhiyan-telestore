@@ -1,0 +1,29 @@
+# ── Dependencies & build artifacts ────────────────────────────────────────────
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+dist/
+
+# ── Version control ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Environment & secrets ────────────────────────────────────────────────────
+.env
+*.env
+!.env.example
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+deploy/
+*.md
