@@ -13,7 +13,7 @@ function useCountdown(targetMs: number) {
   const [remaining, setRemaining] = useState(() => Math.max(0, targetMs - Date.now()));
   useEffect(() => {
     const id = setInterval(() => {
-      setRemaining((prev) => {
+      setRemaining((_) => {
         const next = Math.max(0, targetMs - Date.now());
         if (next === 0) clearInterval(id);
         return next;
@@ -30,7 +30,7 @@ function useCountdown(targetMs: number) {
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="neumorphic-raised bg-background rounded-xl px-3 py-2 min-w-[3rem] text-center">
+      <div className="neumorphic-raised bg-background rounded-xl px-3 py-2 min-w-12 text-center">
         <span className="countdown-digit text-xl sm:text-2xl font-extrabold text-foreground tabular-nums">
           {pad(value)}
         </span>
