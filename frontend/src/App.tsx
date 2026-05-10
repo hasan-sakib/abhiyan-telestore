@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { MobileNav } from "@/components/shared/MobileNav";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
@@ -38,6 +39,7 @@ function StorefrontLayout() {
       </main>
       <Footer />
       <CartDrawer />
+      <MobileNav />
     </div>
   );
 }

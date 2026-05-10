@@ -47,14 +47,17 @@ credentials, SMTP password, etc.).
 docker compose -f deploy/docker-compose.yml up --build
 ```
 
-This starts **4 containers**:
+This starts **4 containers** with the following accessible links:
 
-| Service        | Container URL              | Description             |
-| -------------- | -------------------------- | ----------------------- |
-| PostgreSQL     | `localhost:5432`           | Database                |
-| Backend API    | `http://localhost:8000`    | FastAPI + Uvicorn       |
-| Frontend       | `http://localhost:5173`    | Customer storefront     |
-| Admin Panel    | `http://localhost:5174`    | Admin dashboard         |
+| Link                                  | Service            | Description                                          |
+| ------------------------------------- | ------------------ | ---------------------------------------------------- |
+| http://localhost:5173                  | Customer Frontend  | The public storefront for customers                  |
+| http://localhost:5174                  | Admin Panel        | The admin dashboard for managing the store            |
+| http://localhost:8000                  | Backend API        | FastAPI server (REST API)                             |
+| http://localhost:8000/api/docs         | Swagger UI         | Interactive API documentation                         |
+| http://localhost:8000/api/redoc        | ReDoc              | Alternative API documentation                         |
+| http://localhost:8000/health           | Health Check       | Returns `{"status":"ok"}` if backend is running       |
+| localhost:5432                         | PostgreSQL         | Database (not browser-accessible, use pgAdmin or CLI) |
 
 ### Step 3: Run database migrations
 
