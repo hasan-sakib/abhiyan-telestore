@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ChevronLeft, ChevronRight, Zap, Tag, ArrowRight } from "lucide-react";
+import { useProducts } from "@/hooks/useProducts";
 
 const SLIDES = [
   {
@@ -53,6 +54,15 @@ export function HeroSection() {
   const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
+
+  const { data: featuredData } = useProducts({ is_featured: true, page_size: 10 });
+  const featuredProducts = featuredData?.items ?? [];
+  // Ensure we have enough items for a seamless marquee (needs to be wider than the screen)
+  const repeatedProducts = featuredProducts.length > 0 
+    ? Array.from({ length: Math.max(1, Math.ceil(20 / featuredProducts.length)) }).flatMap(() => featuredProducts)
+    : [];
+  // Duplicate exactly once more for the -50% translateX animation
+  const marqueeContent = [...repeatedProducts, ...repeatedProducts];
 
   useEffect(() => {
     if (!autoPlay) return;
@@ -199,6 +209,37 @@ export function HeroSection() {
             ))}
           </div>
         </div>
+
+        {/* Continuous Sliding Featured Products Marquee */}
+        {featuredProducts.length > 0 && (
+          <div className="mt-8 sm:mt-10 lg:mt-12 relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-md border border-border/50 py-5 shadow-sm group">
+            {/* Gradient masks for smooth edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-linear-to-r from-background to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-linear-to-l from-background to-transparent z-10 pointer-events-none" />
+            
+            <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+              {marqueeContent.map((product, idx) => (
+                <div
+                  key={`${product.id}-${idx}`}
+                  onClick={() => navigate(`/product/${product.slug}`)}
+                  className="flex items-center gap-3 sm:gap-4 px-6 sm:px-10 border-r border-border/40 last:border-transparent cursor-pointer hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden bg-background/50 shrink-0 shadow-sm border border-border/30">
+                    {product.images?.[0]?.url ? (
+                      <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground text-[10px] font-bold">No Image</div>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1 min-w-[140px] sm:min-w-[180px]">
+                    <h4 className="text-sm sm:text-base font-bold text-foreground line-clamp-1">{product.name}</h4>
+                    <p className="text-xs sm:text-sm font-semibold text-primary">৳{product.price.toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
