@@ -38,3 +38,7 @@ class OrderItem(SQLModel, table=True):
 
     order: Optional[Order] = Relationship(back_populates="items")
     product: Optional["Product"] = Relationship(back_populates="order_items")
+
+    @property
+    def product_name(self) -> str:
+        return self.product.name if self.product else ""

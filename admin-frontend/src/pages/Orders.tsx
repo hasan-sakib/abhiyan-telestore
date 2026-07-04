@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +48,7 @@ const variantFor = (s: OrderStatus): "default" | "success" | "warning" | "destru
 
 export default function Orders() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
   const [page, setPage] = useState(1);
 
@@ -119,16 +121,13 @@ export default function Orders() {
                       <TableCell className="text-muted-foreground">{formatDate(o.created_at)}</TableCell>
                       <TableCell>
                         <DropdownMenu>
-                          <DropdownMenuTrigger
-                            className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted disabled:opacity-50"
-                            disabled={next.length === 0}
-                          >
+                          <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
                             <MoreHorizontal className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            {next.length === 0 && (
-                              <DropdownMenuItem disabled>No actions available</DropdownMenuItem>
-                            )}
+                            <DropdownMenuItem onSelect={() => navigate(`/orders/${o.id}`)}>
+                              View Details
+                            </DropdownMenuItem>
                             {next.map((s) => (
                               <DropdownMenuItem
                                 key={s}

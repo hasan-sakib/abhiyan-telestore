@@ -16,7 +16,7 @@ def create_order(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return OrderService(db).create_from_cart(current_user, payload)
+    return OrderService(db).create_order(current_user, payload)
 
 
 @router.get("/", response_model=OrderListResponse)

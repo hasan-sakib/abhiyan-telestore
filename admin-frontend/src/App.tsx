@@ -13,6 +13,7 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Items = lazy(() => import("@/pages/Items"));
 const Categories = lazy(() => import("@/pages/Categories"));
 const Orders = lazy(() => import("@/pages/Orders"));
+const OrderDetail = lazy(() => import("@/pages/OrderDetail"));
 const Users = lazy(() => import("@/pages/Users"));
 const Settings = lazy(() => import("@/pages/Settings"));
 
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/items" element={<Items />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/:id" element={<OrderDetail />} />
           <Route path="/admin" element={<Users />} />
           <Route path="/settings" element={<Settings />} />
         </Route>

@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select, func
 from app.models.order import Order, OrderItem, OrderStatus
-from app.models.cart import Cart, CartItem
+from app.models.product import Product, ProductStatus
 from app.models.user import User
 from app.schemas.order import OrderCreate, OrderListResponse
 
@@ -18,15 +18,25 @@ class OrderService:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_from_cart(self, user: User, payload: OrderCreate) -> Order:
-        cart = self.db.exec(select(Cart).where(Cart.user_id == user.id)).first()
-        if not cart or not cart.items:
+    def create_order(self, user: User, payload: OrderCreate) -> Order:
+        if not payload.items:
             raise HTTPException(status_code=400, detail="Cart is empty")
 
+        products: dict[int, Product] = {}
+        for item in payload.items:
+            product = self.db.get(Product, item.product_id)
+            if not product:
+                raise HTTPException(status_code=404, detail=f"Product {item.product_id} not found")
+            if item.quantity > product.stock_quantity:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"'{product.name}' only has {product.stock_quantity} in stock",
+                )
+            products[item.product_id] = product
+
         total = sum(
-            (item.product.discount_price or item.product.price) * item.quantity
-            for item in cart.items
-            if item.product
+            (products[item.product_id].discount_price or products[item.product_id].price) * item.quantity
+            for item in payload.items
         )
 
         order = Order(
@@ -38,20 +48,19 @@ class OrderService:
         self.db.commit()
         self.db.refresh(order)
 
-        for item in cart.items:
-            if not item.product:
-                continue
+        for item in payload.items:
+            product = products[item.product_id]
             order_item = OrderItem(
                 order_id=order.id,
                 product_id=item.product_id,
                 quantity=item.quantity,
-                unit_price=item.product.discount_price or item.product.price,
+                unit_price=product.discount_price or product.price,
             )
             self.db.add(order_item)
-
-        # Clear the cart after order
-        for item in cart.items:
-            self.db.delete(item)
+            product.stock_quantity -= item.quantity
+            if product.stock_quantity == 0:
+                product.status = ProductStatus.out_of_stock
+            self.db.add(product)
 
         self.db.commit()
         self.db.refresh(order)
@@ -75,7 +84,7 @@ class OrderService:
         order = self.db.get(Order, order_id)
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
-        if not user.is_superuser and order.user_id != user.id:
+        if not (user.is_superuser or user.is_admin) and order.user_id != user.id:
             raise HTTPException(status_code=403, detail="Not authorized")
         return order
 

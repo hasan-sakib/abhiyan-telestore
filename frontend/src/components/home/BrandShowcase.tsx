@@ -1,6 +1,25 @@
+import appleLogo from "@/assets/partners/apple.svg";
+import samsungLogo from "@/assets/partners/samsung.svg";
+import xiaomiLogo from "@/assets/partners/xiaomi.svg";
+import oneplusLogo from "@/assets/partners/oneplus.svg";
+import asusLogo from "@/assets/partners/asus.svg";
+import lenovoLogo from "@/assets/partners/lenovo.svg";
+import ankerLogo from "@/assets/partners/anker.svg";
+import logitechLogo from "@/assets/partners/logitech.svg";
+import sonyLogo from "@/assets/partners/sony.svg";
+import jblLogo from "@/assets/partners/jbl.svg";
+
 const BRANDS = [
-  "Apple", "Samsung", "Xiaomi", "OnePlus", "Asus",
-  "Lenovo", "Anker", "Logitech", "Sony", "JBL",
+  { name: "Apple", logo: appleLogo },
+  { name: "Samsung", logo: samsungLogo },
+  { name: "Xiaomi", logo: xiaomiLogo },
+  { name: "OnePlus", logo: oneplusLogo },
+  { name: "Asus", logo: asusLogo },
+  { name: "Lenovo", logo: lenovoLogo },
+  { name: "Anker", logo: ankerLogo },
+  { name: "Logitech", logo: logitechLogo },
+  { name: "Sony", logo: sonyLogo },
+  { name: "JBL", logo: jblLogo },
 ];
 
 export function BrandShowcase() {
@@ -24,14 +43,16 @@ export function BrandShowcase() {
         <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-linear-to-l from-background to-transparent z-10 pointer-events-none" />
 
         <div className="flex animate-marquee gap-4 sm:gap-6">
-          {doubled.map((name, i) => (
+          {doubled.map((brand, i) => (
             <div
-              key={`${name}-${i}`}
+              key={`${brand.name}-${i}`}
               className="shrink-0 border border-border bg-card rounded-lg px-6 sm:px-8 py-3 sm:py-4 flex items-center justify-center hover:border-primary/40 transition-colors cursor-default"
             >
-              <span className="text-base sm:text-lg font-bold tracking-tight whitespace-nowrap text-foreground">
-                {name}
-              </span>
+              <img
+                src={brand.logo}
+                alt={brand.name}
+                className="h-8 sm:h-10 w-auto object-contain"
+              />
             </div>
           ))}
         </div>

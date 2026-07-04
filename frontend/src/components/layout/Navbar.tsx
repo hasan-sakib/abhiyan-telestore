@@ -207,7 +207,10 @@ export function Navbar() {
                     <div className="text-sm font-semibold text-foreground">{user?.full_name}</div>
                     <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
                   </div>
-                  <DropdownMenuItem onClick={() => navigate("/orders")} className="mt-1">
+                  <DropdownMenuItem onClick={() => navigate("/profile")} className="mt-1">
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/orders")}>
                     Order History
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

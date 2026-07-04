@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from app.models.order import OrderStatus
 
 
@@ -15,7 +15,13 @@ class ShippingAddress(BaseModel):
     country: str = "Bangladesh"
 
 
+class OrderItemCreate(BaseModel):
+    product_id: int
+    quantity: int = Field(gt=0)
+
+
 class OrderCreate(BaseModel):
+    items: List[OrderItemCreate]
     shipping_address: ShippingAddress
 
 
@@ -24,6 +30,7 @@ class OrderItemRead(BaseModel):
 
     id: int
     product_id: int
+    product_name: str
     quantity: int
     unit_price: float
 

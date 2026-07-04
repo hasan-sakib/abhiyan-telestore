@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore, type AuthUser } from "@/store/authStore";
 import { toast } from "@/hooks/useToast";
 import { BASE_URL } from "@/api/client";
+import { apiFetch } from "@/hooks/useProducts";
 
 interface TokenResponse {
   access_token: string;
@@ -85,6 +86,28 @@ export function useResetPassword() {
     mutationFn: (data: { token: string; new_password: string }) =>
       authFetch<void>("/api/v1/auth/reset-password", data),
     onSuccess: () => toast({ title: "Password updated! Please log in.", variant: "success" }),
+    onError: (err: Error) => toast({ title: err.message, variant: "destructive" }),
+  });
+}
+
+export function useUpdateProfile() {
+  const setUser = useAuthStore((s) => s.setUser);
+  return useMutation({
+    mutationFn: (data: { full_name: string; email: string }) =>
+      apiFetch<AuthUser>("/api/v1/users/me", { method: "PATCH", body: JSON.stringify(data) }),
+    onSuccess: (user) => {
+      setUser(user);
+      toast({ title: "Profile updated.", variant: "success" });
+    },
+    onError: (err: Error) => toast({ title: err.message, variant: "destructive" }),
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (data: { current_password: string; new_password: string }) =>
+      apiFetch<void>("/api/v1/users/me/change-password", { method: "POST", body: JSON.stringify(data) }),
+    onSuccess: () => toast({ title: "Password changed.", variant: "success" }),
     onError: (err: Error) => toast({ title: err.message, variant: "destructive" }),
   });
 }
