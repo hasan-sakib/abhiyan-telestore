@@ -51,10 +51,10 @@ export function CartDrawer() {
 
       <div
         ref={drawerRef}
-        className="fixed right-0 top-0 z-50 h-full w-full max-w-sm bg-background border-l shadow-xl translate-x-full flex flex-col"
+        className="fixed right-0 top-0 z-50 h-full w-full max-w-sm bg-background border-l border-border shadow-2xl translate-x-full flex flex-col"
       >
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-semibold text-lg">Your Cart ({items.length})</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <h2 className="font-semibold text-base font-display">Your Cart ({items.length})</h2>
           <Button variant="ghost" size="icon" onClick={() => setDrawerOpen(false)} aria-label="Close cart">
             <X className="h-5 w-5" />
           </Button>

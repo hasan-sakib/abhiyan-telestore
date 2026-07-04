@@ -21,7 +21,7 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
 
   return (
     <div className="space-y-3">
-      <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+      <div className="aspect-square rounded-xl overflow-hidden bg-muted border border-border">
         <img
           src={selected?.url}
           alt={selected?.alt_text ?? productName}

@@ -7,10 +7,10 @@ import { ShieldCheck, Star, Users, Package, Award, Quote } from "lucide-react";
 gsap.registerPlugin(ScrollTrigger);
 
 const STATS = [
-  { icon: Users,     value: 50000,  suffix: "+", label: "Happy Customers" },
-  { icon: Package,   value: 12000,  suffix: "+", label: "Products Sold" },
-  { icon: Award,     value: 99,     suffix: "%", label: "Genuine Products" },
-  { icon: ShieldCheck, value: 5,   suffix: " yr",label: "In Business" },
+  { icon: Users,      value: 50000, suffix: "+",   label: "Happy Customers" },
+  { icon: Package,    value: 12000, suffix: "+",   label: "Products Sold" },
+  { icon: Award,      value: 99,    suffix: "%",   label: "Genuine Products" },
+  { icon: ShieldCheck, value: 5,   suffix: " yr",  label: "In Business" },
 ];
 
 const TESTIMONIALS = [
@@ -93,8 +93,8 @@ export function CustomerTrust() {
         {/* Stats grid */}
         <div>
           <div className="text-center mb-8">
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Why Choose Us</p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            <p className="label-overline mb-1">Why Choose Us</p>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-display">
               Trusted by Thousands
             </h2>
           </div>
@@ -102,15 +102,15 @@ export function CustomerTrust() {
             {STATS.map(({ icon: Icon, value, suffix, label }) => (
               <div
                 key={label}
-                className="trust-card opacity-0 neumorphic-raised bg-background rounded-3xl p-5 sm:p-7 flex flex-col items-center text-center gap-3"
+                className="trust-card opacity-0 border border-border bg-card rounded-xl p-5 sm:p-7 flex flex-col items-center text-center gap-3"
               >
-                <div className="bg-gradient-primary p-3 rounded-2xl shadow-md">
-                  <Icon className="h-6 w-6 text-white" />
+                <div className="bg-primary/10 text-primary p-3 rounded-lg">
+                  <Icon className="h-5 w-5" />
                 </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-foreground">
+                <div className="text-2xl sm:text-3xl font-bold text-foreground font-display">
                   <AnimatedCounter target={value} suffix={suffix} />
                 </div>
-                <p className="text-sm text-muted-foreground font-medium">{label}</p>
+                <p className="text-sm text-muted-foreground">{label}</p>
               </div>
             ))}
           </div>
@@ -119,8 +119,8 @@ export function CustomerTrust() {
         {/* Testimonials */}
         <div>
           <div className="text-center mb-8">
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Reviews</p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            <p className="label-overline mb-1">Reviews</p>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-display">
               What Customers Say
             </h2>
           </div>
@@ -128,20 +128,20 @@ export function CustomerTrust() {
             {TESTIMONIALS.map(({ name, role, rating, text, avatar }) => (
               <div
                 key={name}
-                className="trust-card opacity-0 neumorphic-raised bg-background rounded-3xl p-5 sm:p-6 flex flex-col gap-4"
+                className="trust-card opacity-0 border border-border bg-card rounded-xl p-5 sm:p-6 flex flex-col gap-4"
               >
-                <Quote className="h-6 w-6 text-primary/30" />
+                <Quote className="h-5 w-5 text-primary/20" />
                 <p className="text-sm text-muted-foreground leading-relaxed flex-1">"{text}"</p>
-                <div className="flex items-center gap-1 mb-1">
+                <div className="flex items-center gap-0.5 mb-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-3.5 w-3.5 ${i < rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"}`}
+                      className={`h-3 w-3 ${i < rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/20 fill-muted-foreground/10"}`}
                     />
                   ))}
                 </div>
-                <div className="flex items-center gap-3 border-t border-border/50 pt-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center text-white text-sm font-bold shrink-0">
+                <div className="flex items-center gap-3 border-t border-border pt-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold shrink-0">
                     {avatar}
                   </div>
                   <div>

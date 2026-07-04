@@ -16,7 +16,7 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <ProductDetailSkeleton />
       </div>
     );
@@ -24,7 +24,7 @@ export default function ProductDetail() {
 
   if (isError || !product) {
     return (
-      <div className="container mx-auto px-4 py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
         <h2 className="text-xl font-semibold mb-2">Product not found</h2>
         <Button asChild variant="outline"><Link to="/products">Back to Products</Link></Button>
       </div>
@@ -37,21 +37,19 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Button variant="ghost" size="sm" asChild className="mb-6 -ml-1 gap-1">
-        <Link to="/products">
-          <ChevronLeft className="h-4 w-4" /> Back to Products
-        </Link>
-      </Button>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <Link to="/products" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
+        <ChevronLeft className="h-4 w-4" /> Back to Products
+      </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <ProductImageGallery images={product.images ?? []} productName={product.name} />
 
         <div className="space-y-4">
           {product.brand && (
-            <p className="text-sm text-muted-foreground font-medium uppercase tracking-wide">{product.brand}</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{product.brand}</p>
           )}
-          <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold font-display leading-tight">{product.name}</h1>
 
           <div className="flex items-center gap-2 flex-wrap">
             {product.status === "in_stock" && <Badge variant="success">In Stock</Badge>}
@@ -61,25 +59,25 @@ export default function ProductDetail() {
           </div>
 
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold">
+            <span className="text-3xl font-bold font-display">
               {formatPrice(product.discount_price ?? product.price)}
             </span>
             {product.discount_price && (
-              <span className="text-lg text-muted-foreground line-through">
+              <span className="price-original text-base">
                 {formatPrice(product.price)}
               </span>
             )}
             {product.discount_price && (
-              <Badge variant="destructive" className="text-xs">
+              <span className="price-discount-badge">
                 {Math.round((1 - product.discount_price / product.price) * 100)}% OFF
-              </Badge>
+              </span>
             )}
           </div>
 
           {product.description && (
             <>
               <Separator />
-              <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{product.description}</p>
             </>
           )}
 
@@ -87,12 +85,12 @@ export default function ProductDetail() {
             <>
               <Separator />
               <div>
-                <h3 className="font-semibold mb-2 text-sm">Specifications</h3>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+                <h3 className="font-semibold mb-3 text-sm font-display">Specifications</h3>
+                <dl className="bg-muted/40 rounded-lg p-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   {Object.entries(product.specs).map(([k, v]) => (
                     <div key={k} className="contents">
-                      <dt className="text-muted-foreground">{k}</dt>
-                      <dd>{String(v)}</dd>
+                      <dt className="text-xs text-muted-foreground font-medium">{k}</dt>
+                      <dd className="text-sm font-medium text-foreground">{String(v)}</dd>
                     </div>
                   ))}
                 </dl>
@@ -103,7 +101,7 @@ export default function ProductDetail() {
           <Separator />
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Package className="h-4 w-4" />
+            <Package className="h-4 w-4 text-primary" />
             <span>{product.stock_quantity} units available</span>
           </div>
 

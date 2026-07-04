@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.api.v1.router import api_router
 from app.database import create_db_and_tables
+import app.models  # noqa: F401 — registers all SQLModel classes before create_all
 
 
 @asynccontextmanager

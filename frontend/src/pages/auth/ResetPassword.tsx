@@ -36,9 +36,13 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/20">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
+          <div className="flex items-center justify-center gap-1.5 mb-3">
+            <span className="inline-block w-1.5 h-5 bg-primary rounded-sm" />
+            <span className="font-bold text-sm font-display"><span className="text-primary">Abiyan</span> Telestore</span>
+          </div>
           <CardTitle>Reset password</CardTitle>
           <CardDescription>Enter your new password below.</CardDescription>
         </CardHeader>

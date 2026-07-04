@@ -2,14 +2,16 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ChevronLeft, ChevronRight, Zap, Tag, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Zap, ArrowRight } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import heroIphone from "@/assets/hero/hero-iphone.jpg";
+import heroGalaxy from "@/assets/hero/hero-galaxy-s26-ultra.jpg";
+import heroPixel from "@/assets/hero/hero-pixel.jpg";
 
 const SLIDES = [
   {
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBChCX8_F4yzyiFxfnDv9Z20pq2TZVcpU2NqeSXPjSnAV2Dw284zbsLrVuBXSSxVP8OWJ4j6c0D8jdQpuv9gFGMC6W4EjfTFpgVLBJwp6ZeexUUqrAnXmj3mhibd1NwQUwm_ILdmYv1sV80DNqe0WKkOaBWyEhuSYWHsRSg3IdHoBPJwX1rsYpnDSfWSs7ov0-6mbB_3ouxQ106TSV27PpeZhM7b0GM1p7V2d5_JanugTfWdGywQqHw7niCitxzavULo0oiMGW1sahf",
+    image: heroIphone,
     badge: "New Arrival",
-    badgeColor: "bg-gradient-primary",
     title: "Experience the New Titanium Edge",
     subtitle: "The most powerful chip ever in a smartphone. Pro-grade cameras. Sophisticated design.",
     cta: "Buy Now",
@@ -18,34 +20,41 @@ const SLIDES = [
     exploreLink: "/products?featured=true",
   },
   {
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCxBC_VpwPgdDvkClsV5IiBeMWXHWKcTEWhjw6kl-S8By5q8-69AMdWlhNdGa8Y9hjTEXT-L2J5rTpLEADzC50D_jfdadiL5LIXhbM9vevFAzhrtW6vV6FdHxhTihAh8Ix350j14ClGT8WZAN8frPAYKLKNTNjlpXqkMIdqKiZCetwbqvfyzHPbZocNwyUIa4eMFSMbj8Ax5TBXAo-iltsSmHWcvb70TjLIAxjk3KF4VbGKh9Gg061U1Ot7LKsXal36eUWfS1loU7rq",
-    badge: "Hot Deal",
-    badgeColor: "bg-gradient-warm",
-    title: "Power Meets Portability",
-    subtitle: "Ultra-slim laptops & tablets built for the next generation. Premium performance, all day battery.",
+    image: heroGalaxy,
+    badge: "Galaxy AI",
+    title: "Introducing Galaxy S26 Ultra",
+    subtitle: "Unleash next-level creativity and productivity with Galaxy AI built right in.",
     cta: "Shop Now",
-    ctaLink: "/products?category=laptops",
-    explore: "View Tablets",
-    exploreLink: "/products?category=tablets",
+    ctaLink: "/products",
+    explore: "Explore More",
+    exploreLink: "/products?featured=true",
+  },
+  {
+    image: heroPixel,
+    badge: "Just Landed",
+    title: "Meet the New Google Pixel",
+    subtitle: "Pure Android, smarter photography, and AI that actually helps you get things done.",
+    cta: "Buy Now",
+    ctaLink: "/products",
+    explore: "Explore More",
+    exploreLink: "/products?featured=true",
   },
 ];
 
 const SIDE_CARDS = [
   {
-    type: "promo",
     title: "Flash Sale",
     sub: "Up to 30% off on selected smartphones this weekend only.",
     cta: "Grab Deal",
     ctaLink: "/products?featured=true",
-    gradient: "bg-gradient-warm",
+    bg: "bg-primary/5",
   },
   {
-    type: "bundle",
     title: "Bundle & Save",
     sub: "Buy a laptop + wireless earbuds and save ৳2000.",
     cta: "View Bundle",
     ctaLink: "/products",
-    gradient: "bg-gradient-cool",
+    bg: "bg-muted/60",
   },
 ];
 
@@ -57,11 +66,9 @@ export function HeroSection() {
 
   const { data: featuredData } = useProducts({ is_featured: true, page_size: 10 });
   const featuredProducts = featuredData?.items ?? [];
-  // Ensure we have enough items for a seamless marquee (needs to be wider than the screen)
-  const repeatedProducts = featuredProducts.length > 0 
+  const repeatedProducts = featuredProducts.length > 0
     ? Array.from({ length: Math.max(1, Math.ceil(20 / featuredProducts.length)) }).flatMap(() => featuredProducts)
     : [];
-  // Duplicate exactly once more for the -50% translateX animation
   const marqueeContent = [...repeatedProducts, ...repeatedProducts];
 
   useEffect(() => {
@@ -98,8 +105,8 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
 
           {/* Main hero card */}
-          <div className="lg:col-span-8 neumorphic-raised bg-background rounded-3xl overflow-hidden relative min-h-88 sm:min-h-112 lg:min-h-136 flex items-center group">
-            {/* Background image with smooth transition */}
+          <div className="lg:col-span-8 border border-border rounded-xl overflow-hidden relative min-h-88 sm:min-h-112 lg:min-h-136 flex items-center group bg-card">
+            {/* Background image */}
             <div className="absolute inset-0 z-0">
               <img
                 key={activeSlide}
@@ -114,15 +121,15 @@ export function HeroSection() {
 
             {/* Content */}
             <div className="relative z-10 px-6 sm:px-10 py-8 flex flex-col gap-4 max-w-lg">
-              <span className={`hero-badge opacity-0 self-start text-white text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full shadow-lg ${slide.badgeColor} flex items-center gap-1.5`}>
-                <Zap className="h-3.5 w-3.5" /> {slide.badge}
+              <span className="hero-badge opacity-0 self-start bg-primary/15 text-primary border border-primary/20 rounded-full text-xs font-semibold px-3 py-1 flex items-center gap-1.5">
+                <Zap className="h-3 w-3" /> {slide.badge}
               </span>
 
-              <h1 className="hero-title opacity-0 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-foreground">
+              <h1 className="hero-title opacity-0 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-foreground font-display">
                 {slide.title}
               </h1>
 
-              <p className="hero-subtitle opacity-0 text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
+              <p className="hero-subtitle opacity-0 text-sm sm:text-base text-muted-foreground leading-relaxed">
                 {slide.subtitle}
               </p>
 
@@ -130,14 +137,14 @@ export function HeroSection() {
                 <button
                   type="button"
                   onClick={() => navigate(slide.ctaLink)}
-                  className="bg-gradient-primary text-white font-bold py-3 px-7 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm sm:text-base flex items-center gap-2"
+                  className="bg-primary text-white font-semibold py-3 px-7 rounded-md shadow-md hover:bg-primary/90 transition-colors text-sm sm:text-base flex items-center gap-2"
                 >
                   {slide.cta} <ArrowRight className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate(slide.exploreLink)}
-                  className="bg-background/80 backdrop-blur text-foreground font-semibold py-3 px-7 rounded-2xl neumorphic-raised hover:scale-105 active:scale-95 transition-all text-sm sm:text-base border border-border/50"
+                  className="bg-background/80 backdrop-blur text-foreground font-medium py-3 px-7 rounded-md border border-border/60 hover:bg-background transition-colors text-sm sm:text-base"
                 >
                   {slide.explore}
                 </button>
@@ -145,7 +152,7 @@ export function HeroSection() {
             </div>
 
             {/* Slide controls */}
-            <div className="absolute bottom-4 left-6 sm:left-10 flex items-center gap-3 z-10">
+            <div className="absolute bottom-4 left-6 sm:left-10 flex items-center gap-2.5 z-10">
               {SLIDES.map((_, i) => (
                 <button
                   key={i}
@@ -153,8 +160,8 @@ export function HeroSection() {
                   onClick={() => goTo(i)}
                   className={`transition-all duration-300 rounded-full ${
                     i === activeSlide
-                      ? "w-8 h-2.5 bg-primary shadow-md"
-                      : "w-2.5 h-2.5 bg-white/60 hover:bg-white/90"
+                      ? "w-7 h-2 bg-primary"
+                      : "w-2 h-2 bg-white/50 hover:bg-white/80"
                   }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
@@ -165,18 +172,18 @@ export function HeroSection() {
             <button
               type="button"
               onClick={() => goTo((activeSlide - 1 + SLIDES.length) % SLIDES.length)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 glass-card p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-background/90 border border-border/60 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="h-5 w-5 text-foreground" />
+              <ChevronLeft className="h-4 w-4 text-foreground" />
             </button>
             <button
               type="button"
               onClick={() => goTo((activeSlide + 1) % SLIDES.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 glass-card p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-background/90 border border-border/60 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
               aria-label="Next slide"
             >
-              <ChevronRight className="h-5 w-5 text-foreground" />
+              <ChevronRight className="h-4 w-4 text-foreground" />
             </button>
           </div>
 
@@ -185,22 +192,19 @@ export function HeroSection() {
             {SIDE_CARDS.map((card, i) => (
               <div
                 key={i}
-                className="hero-side opacity-0 neumorphic-raised rounded-3xl overflow-hidden relative group cursor-pointer"
+                className={`hero-side opacity-0 border border-border rounded-xl overflow-hidden cursor-pointer group/card ${card.bg}`}
                 onClick={() => navigate(card.ctaLink)}
               >
-                <div className={`${card.gradient} opacity-10 absolute inset-0`} />
-                <div className="relative p-5 sm:p-6 flex flex-col justify-between h-full min-h-40">
+                <div className="p-5 sm:p-6 flex flex-col justify-between h-full min-h-40">
                   <div>
-                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-xs font-bold ${card.gradient} shadow-md mb-3`}>
-                      <Tag className="h-3 w-3" /> Special
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground">{card.title}</h3>
+                    <p className="label-overline mb-3">Special Offer</p>
+                    <h3 className="text-lg font-bold text-foreground font-display">{card.title}</h3>
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{card.sub}</p>
                   </div>
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); navigate(card.ctaLink); }}
-                    className={`mt-4 text-sm font-bold text-white ${card.gradient} px-5 py-2.5 rounded-xl hover:scale-105 active:scale-95 transition-transform shadow-md self-start flex items-center gap-1.5`}
+                    className="mt-4 text-sm font-semibold text-foreground bg-foreground/5 border border-border px-4 py-2 rounded-md hover:bg-foreground/10 transition-colors self-start flex items-center gap-1.5"
                   >
                     {card.cta} <ArrowRight className="h-3.5 w-3.5" />
                   </button>
@@ -210,30 +214,30 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Continuous Sliding Featured Products Marquee */}
+        {/* Featured products marquee */}
         {featuredProducts.length > 0 && (
-          <div className="mt-8 sm:mt-10 lg:mt-12 relative overflow-hidden rounded-2xl bg-card/40 backdrop-blur-md border border-border/50 py-5 shadow-sm group">
-            {/* Gradient masks for smooth edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-linear-to-r from-background to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-linear-to-l from-background to-transparent z-10 pointer-events-none" />
-            
+          <div className="mt-8 sm:mt-10 lg:mt-12 relative overflow-hidden rounded-xl bg-muted/40 border-y border-border py-4 group">
+            {/* Gradient edge masks */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 bg-linear-to-r from-background to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-linear-to-l from-background to-transparent z-10 pointer-events-none" />
+
             <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
               {marqueeContent.map((product, idx) => (
                 <div
                   key={`${product.id}-${idx}`}
-                  onClick={() => navigate(`/product/${product.slug}`)}
-                  className="flex items-center gap-3 sm:gap-4 px-6 sm:px-10 border-r border-border/40 last:border-transparent cursor-pointer hover:scale-105 transition-transform duration-300"
+                  onClick={() => navigate(`/products/${product.slug}`)}
+                  className="flex items-center gap-3 px-5 sm:px-8 border-r border-border/40 last:border-transparent cursor-pointer hover:bg-background/60 transition-colors rounded-lg mx-1 py-1"
                 >
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden bg-background/50 shrink-0 shadow-sm border border-border/30">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-background shrink-0 border border-border/40">
                     {product.images?.[0]?.url ? (
                       <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-secondary text-secondary-foreground text-[10px] font-bold">No Image</div>
+                      <div className="w-full h-full flex items-center justify-center bg-muted text-[10px] text-muted-foreground">–</div>
                     )}
                   </div>
-                  <div className="flex flex-col gap-1 min-w-[140px] sm:min-w-[180px]">
-                    <h4 className="text-sm sm:text-base font-bold text-foreground line-clamp-1">{product.name}</h4>
-                    <p className="text-xs sm:text-sm font-semibold text-primary">৳{product.price.toLocaleString()}</p>
+                  <div className="flex flex-col gap-0.5 min-w-[130px] sm:min-w-[160px]">
+                    <h4 className="text-sm font-semibold text-foreground line-clamp-1 font-display">{product.name}</h4>
+                    <p className="text-xs font-medium text-primary">৳{product.price.toLocaleString()}</p>
                   </div>
                 </div>
               ))}

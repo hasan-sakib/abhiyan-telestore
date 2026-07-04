@@ -30,12 +30,12 @@ function useCountdown(targetMs: number) {
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="neumorphic-raised bg-background rounded-xl px-3 py-2 min-w-12 text-center">
-        <span className="countdown-digit text-xl sm:text-2xl font-extrabold text-foreground tabular-nums">
+      <div className="bg-muted rounded-md px-2.5 py-2 min-w-10 text-center">
+        <span className="countdown-digit text-lg sm:text-xl font-bold text-foreground tabular-nums">
           {pad(value)}
         </span>
       </div>
-      <span className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-semibold">
+      <span className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-medium">
         {label}
       </span>
     </div>
@@ -55,13 +55,13 @@ export function FlashSaleSection() {
     <section className="py-8 sm:py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section header */}
-        <div className="neumorphic-raised bg-background rounded-3xl px-5 sm:px-7 py-4 sm:py-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="border border-border rounded-xl px-5 sm:px-7 py-4 sm:py-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-warm p-2.5 rounded-2xl shadow-lg animate-pulse-soft">
-              <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            <div className="bg-destructive/10 text-destructive p-2.5 rounded-lg shrink-0">
+              <Zap className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight font-display">
                 Flash Sale
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">Limited time offers — don't miss out!</p>
@@ -70,21 +70,21 @@ export function FlashSaleSection() {
 
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span className="text-xs font-semibold uppercase tracking-wide">Ends in</span>
+              <Clock className="h-3.5 w-3.5" />
+              <span className="text-xs font-medium uppercase tracking-wide">Ends in</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <CountdownUnit value={h} label="Hrs" />
-              <span className="text-xl font-bold text-primary mb-4">:</span>
+              <span className="text-lg font-semibold text-muted-foreground mb-4">:</span>
               <CountdownUnit value={m} label="Min" />
-              <span className="text-xl font-bold text-primary mb-4">:</span>
+              <span className="text-lg font-semibold text-muted-foreground mb-4">:</span>
               <CountdownUnit value={s} label="Sec" />
             </div>
           </div>
 
           <Link
             to="/products?featured=true"
-            className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-primary hover:underline whitespace-nowrap"
+            className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline whitespace-nowrap"
           >
             View All <ArrowRight className="h-4 w-4" />
           </Link>
@@ -94,8 +94,8 @@ export function FlashSaleSection() {
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="neumorphic-raised rounded-3xl p-4 flex flex-col gap-3">
-                <Skeleton className="w-full aspect-square rounded-2xl" />
+              <div key={i} className="border border-border rounded-xl p-4 flex flex-col gap-3">
+                <Skeleton className="w-full aspect-square rounded-lg" />
                 <Skeleton className="h-4 w-3/4 rounded" />
                 <Skeleton className="h-4 w-1/2 rounded" />
               </div>
@@ -112,7 +112,7 @@ export function FlashSaleSection() {
         <div className="mt-5 flex justify-center sm:hidden">
           <Link
             to="/products?featured=true"
-            className="flex items-center gap-2 bg-gradient-warm text-white font-bold py-2.5 px-8 rounded-2xl text-sm shadow-md hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 bg-foreground text-background font-semibold py-2.5 px-8 rounded-md text-sm hover:bg-foreground/90 transition-colors"
           >
             View All Deals <ArrowRight className="h-4 w-4" />
           </Link>

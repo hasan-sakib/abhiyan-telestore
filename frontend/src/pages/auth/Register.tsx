@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,11 +21,12 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/20">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-2">
-            <Smartphone className="h-8 w-8 text-primary" />
+          <div className="flex items-center justify-center gap-1.5 mb-3">
+            <span className="inline-block w-1.5 h-5 bg-primary rounded-sm" />
+            <span className="font-bold text-sm font-display"><span className="text-primary">Abiyan</span> Telestore</span>
           </div>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>Join Abiyan Telestore today</CardDescription>

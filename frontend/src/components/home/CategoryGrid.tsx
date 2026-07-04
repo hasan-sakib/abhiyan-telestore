@@ -17,31 +17,17 @@ const FALLBACK_CATEGORIES: Array<{ name: string; slug?: string; id?: number }> =
   { name: "Cameras" },
 ];
 
-type GradientKey = "blue" | "purple" | "indigo" | "green" | "pink" | "orange" | "red" | "teal" | "default";
-
-const ICON_CONFIG: Record<GradientKey, { gradient: string; bg: string; text: string }> = {
-  blue:    { gradient: "from-blue-500 to-cyan-400",    bg: "bg-blue-50 dark:bg-blue-950/30",   text: "text-blue-500" },
-  purple:  { gradient: "from-purple-500 to-violet-400", bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-500" },
-  indigo:  { gradient: "from-indigo-500 to-blue-400",  bg: "bg-indigo-50 dark:bg-indigo-950/30", text: "text-indigo-500" },
-  green:   { gradient: "from-green-500 to-emerald-400", bg: "bg-green-50 dark:bg-green-950/30",  text: "text-green-500" },
-  pink:    { gradient: "from-pink-500 to-rose-400",    bg: "bg-pink-50 dark:bg-pink-950/30",   text: "text-pink-500" },
-  orange:  { gradient: "from-orange-500 to-amber-400", bg: "bg-orange-50 dark:bg-orange-950/30", text: "text-orange-500" },
-  red:     { gradient: "from-red-500 to-orange-400",   bg: "bg-red-50 dark:bg-red-950/30",    text: "text-red-500" },
-  teal:    { gradient: "from-teal-500 to-cyan-400",    bg: "bg-teal-50 dark:bg-teal-950/30",   text: "text-teal-500" },
-  default: { gradient: "from-primary to-violet-500",   bg: "bg-primary/5",                     text: "text-primary" },
-};
-
-function pickConfig(name: string): { icon: LucideIcon; color: GradientKey } {
+function pickIcon(name: string): LucideIcon {
   const n = name.toLowerCase();
-  if (n.includes("phone"))   return { icon: Smartphone, color: "blue" };
-  if (n.includes("laptop"))  return { icon: Laptop,     color: "purple" };
-  if (n.includes("tablet"))  return { icon: Tablet,     color: "indigo" };
-  if (n.includes("watch") || n.includes("wear")) return { icon: Watch, color: "green" };
-  if (n.includes("headphone") || n.includes("audio") || n.includes("earbud")) return { icon: Headphones, color: "pink" };
-  if (n.includes("speaker")) return { icon: Speaker,   color: "orange" };
-  if (n.includes("camera"))  return { icon: Camera,    color: "red" };
-  if (n.includes("power") || n.includes("charger") || n.includes("cable") || n.includes("access")) return { icon: Plug, color: "orange" };
-  return { icon: Tag, color: "default" };
+  if (n.includes("phone"))   return Smartphone;
+  if (n.includes("laptop"))  return Laptop;
+  if (n.includes("tablet"))  return Tablet;
+  if (n.includes("watch") || n.includes("wear")) return Watch;
+  if (n.includes("headphone") || n.includes("audio") || n.includes("earbud")) return Headphones;
+  if (n.includes("speaker")) return Speaker;
+  if (n.includes("camera"))  return Camera;
+  if (n.includes("power") || n.includes("charger") || n.includes("cable") || n.includes("access")) return Plug;
+  return Tag;
 }
 
 export function CategoryGrid() {
@@ -55,8 +41,8 @@ export function CategoryGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-end justify-between mb-6 sm:mb-8">
           <div>
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Browse by</p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            <p className="label-overline mb-1">Browse by</p>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-display">
               Top Categories
             </h2>
           </div>
@@ -72,13 +58,12 @@ export function CategoryGrid() {
           {isLoading
             ? Array.from({ length: 7 }).map((_, i) => (
                 <div key={i} className="flex flex-col items-center gap-3">
-                  <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl" />
+                  <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl" />
                   <Skeleton className="h-3 w-16 rounded" />
                 </div>
               ))
             : categories.map((cat, idx) => {
-                const { icon: Icon, color } = pickConfig(cat.name);
-                const cfg = ICON_CONFIG[color];
+                const Icon = pickIcon(cat.name);
                 const href =
                   "id" in cat && cat.id
                     ? `/products?category_id=${cat.id}`
@@ -92,18 +77,10 @@ export function CategoryGrid() {
                     to={href}
                     className="flex flex-col items-center gap-2.5 group"
                   >
-                    <div
-                      className={`
-                        w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center
-                        neumorphic-raised transition-all duration-300 ${cfg.bg}
-                        group-hover:scale-110 group-hover:shadow-lg relative overflow-hidden
-                      `}
-                    >
-                      {/* Gradient background on hover */}
-                      <div className={`absolute inset-0 bg-linear-to-br ${cfg.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl`} />
-                      <Icon className={`h-7 w-7 sm:h-8 sm:w-8 ${cfg.text} group-hover:text-white transition-colors duration-300 relative z-10`} />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-border bg-card flex items-center justify-center group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-200">
+                      <Icon className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
                     </div>
-                    <span className="text-xs sm:text-sm font-semibold text-foreground text-center group-hover:text-primary transition-colors leading-tight">
+                    <span className="text-xs sm:text-sm font-medium text-muted-foreground text-center group-hover:text-foreground transition-colors leading-tight">
                       {cat.name}
                     </span>
                   </Link>

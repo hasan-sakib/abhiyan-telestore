@@ -59,10 +59,10 @@ export default function ProductListing() {
   }, [filters]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">Products</h1>
+          <h1 className="text-2xl font-bold font-display">Products</h1>
           {!isLoading && (
             <p className="text-sm text-muted-foreground mt-0.5">{total} product{total !== 1 ? "s" : ""} found</p>
           )}

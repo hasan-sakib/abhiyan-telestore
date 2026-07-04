@@ -90,13 +90,6 @@ const config: Config = {
         "slide-in-right": "slide-in-right 0.4s ease-out forwards",
         "scale-in": "scale-in 0.3s ease-out forwards",
       },
-      backgroundImage: {
-        "gradient-primary": "linear-gradient(135deg, #5b5ef4 0%, #7c3aed 100%)",
-        "gradient-warm": "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)",
-        "gradient-cool": "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
-        "gradient-green": "linear-gradient(135deg, #10b981 0%, #06b6d4 100%)",
-        "gradient-hero": "linear-gradient(135deg, #0f0c29, #302b63, #24243e)",
-      },
     },
   },
   plugins: [],

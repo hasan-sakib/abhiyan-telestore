@@ -17,7 +17,7 @@ export function MobileNav() {
   const count = totalItems();
 
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 glass-panel border-t border-border/50 safe-area-bottom">
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-background border-t border-border safe-area-bottom">
       <div className="flex items-center justify-around px-2 py-2">
         {TABS.map(({ to, label, icon: Icon, cartBadge, authTo }) => {
           const href = authTo && !isAuthenticated ? authTo : to;
