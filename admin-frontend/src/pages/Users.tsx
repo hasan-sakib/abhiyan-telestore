@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table";
@@ -19,7 +19,11 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { Pagination } from "@/components/shared/Pagination";
 import { apiFetch } from "@/lib/api";
+import { iconButtonTrigger } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
 import {
   userCreateSchema, userEditSchema,
@@ -75,19 +79,19 @@ export default function Users() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Users</CardTitle>
-            <CardDescription>Manage user accounts and permissions</CardDescription>
-          </div>
-          {me?.is_superuser && (
+      <PageHeader
+        title="Users"
+        description="Manage user accounts and permissions"
+        actions={
+          me?.is_superuser ? (
             <Button onClick={() => setCreateOpen(true)}>
               <Plus className="h-4 w-4" /> Add User
             </Button>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-4">
+          ) : undefined
+        }
+      />
+      <Card>
+        <CardContent className="space-y-4 pt-6">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -133,15 +137,14 @@ export default function Users() {
                           : <Badge variant="secondary">User</Badge>}
                     </TableCell>
                     <TableCell>
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className={`h-2 w-2 rounded-full ${u.is_active ? "bg-emerald-500" : "bg-muted-foreground/50"}`} />
+                      <Badge variant={u.is_active ? "success" : "secondary"}>
                         {u.is_active ? "Active" : "Inactive"}
-                      </span>
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {me?.is_superuser ? (
                         <DropdownMenu>
-                          <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
+                          <DropdownMenuTrigger className={iconButtonTrigger}>
                             <MoreHorizontal className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -164,25 +167,8 @@ export default function Users() {
             </Table>
           </div>
 
-          {data && data.total > data.page_size && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                Page {data.page} of {Math.max(1, Math.ceil(data.total / data.page_size))}
-              </span>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-                  Previous
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={page * data.page_size >= data.total}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+          {data && (
+            <Pagination page={page} pageSize={data.page_size} total={data.total} onPageChange={setPage} />
           )}
         </CardContent>
       </Card>
@@ -332,37 +318,6 @@ function EditUserDialog({
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function ConfirmDialog({
-  open, title, description, confirmLabel, confirmVariant = "default",
-  onCancel, onConfirm, isPending,
-}: {
-  open: boolean;
-  title: string;
-  description: string;
-  confirmLabel: string;
-  confirmVariant?: "default" | "destructive";
-  onCancel: () => void;
-  onConfirm: () => void;
-  isPending?: boolean;
-}) {
-  return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) onCancel(); }}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={onCancel}>Cancel</Button>
-          <Button variant={confirmVariant} onClick={onConfirm} disabled={isPending}>
-            {isPending ? "Working..." : confirmLabel}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

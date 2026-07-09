@@ -18,13 +18,13 @@ export function Sidebar() {
   const toggleTheme = useThemeStore((s) => s.toggle);
 
   return (
-    <aside className="hidden md:flex flex-col h-screen w-64 bg-surface p-6 sticky top-0 neu-raised rounded-r-xl z-40">
+    <aside className="hidden md:flex flex-col h-screen w-64 bg-card border-r border-border p-6 sticky top-0 z-40">
       <div className="mb-8 px-2">
         <h1 className="text-2xl font-bold text-secondary tracking-tight">ABIYAN</h1>
-        <p className="text-xs label-caps text-on-surface-variant mt-1">Systems Controller</p>
+        <p className="text-xs label-caps text-muted-foreground mt-1">Systems Controller</p>
       </div>
 
-      <nav className="grow space-y-3 overflow-y-auto">
+      <nav className="grow space-y-1 overflow-y-auto">
         {items.map(({ to, icon, label, end }) => (
           <NavLink
             key={to}
@@ -32,10 +32,10 @@ export function Sidebar() {
             end={end}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 p-3 rounded-lg transition-all duration-300",
+                "flex items-center gap-3 p-3 rounded-lg transition-colors",
                 isActive
-                  ? "neu-inset text-secondary font-bold"
-                  : "text-on-surface-variant hover:text-primary hover:scale-[1.02] hover:neu-raised-sm",
+                  ? "bg-accent text-accent-foreground font-bold"
+                  : "text-muted-foreground hover:bg-muted hover:text-primary",
               )
             }
           >
@@ -45,7 +45,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
+      <div className="mt-auto border-t border-border pt-4 space-y-1">
         <NavLink
           to="/settings"
           className={({ isActive }) =>
@@ -53,7 +53,7 @@ export function Sidebar() {
               "w-full flex items-center gap-3 p-3 rounded-lg transition-colors",
               isActive
                 ? "text-secondary font-bold"
-                : "text-on-surface-variant hover:text-primary",
+                : "text-muted-foreground hover:bg-muted hover:text-primary",
             )
           }
         >
@@ -64,7 +64,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={toggleTheme}
-          className="w-full flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+          className="w-full flex items-center gap-3 p-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-primary transition-colors"
         >
           <Icon name={theme === "dark" ? "light_mode" : "dark_mode"} size={20} />
           <span className="text-sm font-semibold">
@@ -75,7 +75,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={logout}
-          className="w-full flex items-center gap-3 p-3 rounded-lg text-destructive transition-colors hover:opacity-80"
+          className="w-full flex items-center gap-3 p-3 rounded-lg text-destructive transition-colors hover:bg-destructive/10"
         >
           <Icon name="logout" size={20} />
           <span className="text-sm font-semibold">Logout</span>

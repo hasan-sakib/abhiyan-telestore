@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@/components/ui/icon";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { apiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -33,24 +35,10 @@ const formatCurrency = (n: number) =>
     maximumFractionDigits: 0,
   }).format(n);
 
-const stockStatus = (stock: number) => {
-  if (stock <= 0)
-    return {
-      label: "Out of Stock",
-      pillBg: "bg-error-container",
-      pillFg: "text-on-error-container",
-    };
-  if (stock < 10)
-    return {
-      label: "Low Stock",
-      pillBg: "bg-tertiary-container",
-      pillFg: "text-on-tertiary-container",
-    };
-  return {
-    label: "In Stock",
-    pillBg: "bg-secondary-fixed",
-    pillFg: "text-on-secondary-fixed-variant",
-  };
+const stockStatus = (stock: number): { label: string; variant: "destructive" | "warning" | "success" } => {
+  if (stock <= 0) return { label: "Out of Stock", variant: "destructive" };
+  if (stock < 10) return { label: "Low Stock", variant: "warning" };
+  return { label: "In Stock", variant: "success" };
 };
 
 export default function Dashboard() {
@@ -70,17 +58,16 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
           label="Total Sales"
           value={stats ? formatCurrency(stats.total_revenue) : "—"}
           icon="payments"
           tone="secondary"
-          path="M0 15 Q 10 5, 20 12 T 40 8 T 60 15 T 80 5 T 100 10"
           footer={
             <span className="flex items-center gap-1">
-              <Icon name="trending_up" size={14} /> +12.5% this month
+              <Icon name="trending_up" size={16} /> +12.5% this month
             </span>
           }
         />
@@ -89,7 +76,6 @@ export default function Dashboard() {
           value={stats ? stats.pending_orders.toLocaleString() : "—"}
           icon="local_shipping"
           tone="tertiary"
-          path="M0 10 Q 20 18, 40 10 T 80 12 T 100 5"
           footer={`${stats?.pending_orders ?? 0} pending shipment`}
         />
         <StatCard
@@ -97,52 +83,48 @@ export default function Dashboard() {
           value={stats ? stats.total_products.toLocaleString() : "—"}
           icon="inventory_2"
           tone="primary"
-          path="M0 5 Q 30 5, 50 15 T 100 8"
           footer={
             <span className="flex items-center gap-1">
-              <Icon name="group" size={14} /> Live catalog
+              <Icon name="group" size={16} /> Live catalog
             </span>
           }
         />
       </section>
 
-      <section className="neu-raised rounded-xl overflow-hidden">
-        <div className="p-4 flex justify-between items-center border-b border-outline-variant/30">
-          <h3 className="text-xl font-semibold text-on-surface">Recent Inventory</h3>
+      <Card className="overflow-hidden">
+        <div className="p-4 flex justify-between items-center border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">Recent Inventory</h3>
           <button
             type="button"
             onClick={() => navigate("/items")}
-            className="flex items-center gap-2 px-4 py-2 bg-secondary text-on-secondary rounded-lg text-sm font-semibold neu-button hover:scale-105 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm font-semibold hover:bg-secondary/90 transition-colors"
           >
-            <Icon name="add" size={18} />
+            <Icon name="add" size={16} />
             Add New Product
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-surface-container-low">
-                <th className="p-4 text-sm font-semibold text-on-surface-variant">Product</th>
-                <th className="p-4 text-sm font-semibold text-on-surface-variant">SKU</th>
-                <th className="p-4 text-sm font-semibold text-on-surface-variant">Price</th>
-                <th className="p-4 text-sm font-semibold text-on-surface-variant">Status</th>
-                <th className="p-4 text-sm font-semibold text-on-surface-variant">Stock</th>
-                <th className="p-4 text-sm font-semibold text-on-surface-variant text-right">
+              <tr className="bg-muted">
+                <th className="p-4 text-sm font-semibold text-muted-foreground">Product</th>
+                <th className="p-4 text-sm font-semibold text-muted-foreground">SKU</th>
+                <th className="p-4 text-sm font-semibold text-muted-foreground">Price</th>
+                <th className="p-4 text-sm font-semibold text-muted-foreground">Status</th>
+                <th className="p-4 text-sm font-semibold text-muted-foreground">Stock</th>
+                <th className="p-4 text-sm font-semibold text-muted-foreground text-right">
                   Action
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant/20">
+            <tbody className="divide-y divide-border">
               {(products?.items ?? []).slice(0, 5).map((p) => {
                 const s = stockStatus(p.stock);
                 return (
-                  <tr
-                    key={p.id}
-                    className="hover:bg-surface-container-lowest transition-colors group"
-                  >
+                  <tr key={p.id} className="hover:bg-muted/50 transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 neu-inset rounded-lg p-1 overflow-hidden flex items-center justify-center">
+                        <div className="w-12 h-12 border border-border rounded-lg p-1 overflow-hidden flex items-center justify-center bg-muted">
                           {p.images?.[0]?.image_url ? (
                             <img
                               src={p.images[0].image_url}
@@ -150,42 +132,34 @@ export default function Dashboard() {
                               className="w-full h-full object-cover rounded-md"
                             />
                           ) : (
-                            <Icon name="image" size={20} className="text-on-surface-variant" />
+                            <Icon name="image" size={20} className="text-muted-foreground" />
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-on-surface">{p.name}</p>
-                          <p className="text-xs text-on-surface-variant">
+                          <p className="text-sm font-semibold text-foreground">{p.name}</p>
+                          <p className="text-xs text-muted-foreground">
                             {p.category?.name ?? "Uncategorised"}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="p-4 text-sm font-mono text-outline">
+                    <td className="p-4 text-sm font-mono text-muted-foreground">
                       ABI-{String(p.id).padStart(5, "0")}
                     </td>
-                    <td className="p-4 text-sm font-bold text-on-surface">
+                    <td className="p-4 text-sm font-bold text-foreground">
                       {formatCurrency(p.price)}
                     </td>
                     <td className="p-4">
-                      <span
-                        className={cn(
-                          "px-3 py-1 rounded-full text-xs font-bold",
-                          s.pillBg,
-                          s.pillFg,
-                        )}
-                      >
-                        {s.label}
-                      </span>
+                      <Badge variant={s.variant}>{s.label}</Badge>
                     </td>
                     <td className="p-4 text-sm">{p.stock} units</td>
                     <td className="p-4 text-right">
                       <button
                         type="button"
                         onClick={() => navigate("/items")}
-                        className="p-2 neu-raised rounded-lg text-primary hover:text-secondary transition-colors group-hover:scale-110"
+                        className="p-2 rounded-md text-primary hover:bg-muted transition-colors"
                       >
-                        <Icon name="edit" size={18} />
+                        <Icon name="edit" size={16} />
                       </button>
                     </td>
                   </tr>
@@ -195,7 +169,7 @@ export default function Dashboard() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="p-12 text-center text-sm text-on-surface-variant"
+                    className="p-12 text-center text-sm text-muted-foreground"
                   >
                     No products yet.
                   </td>
@@ -204,15 +178,15 @@ export default function Dashboard() {
             </tbody>
           </table>
         </div>
-      </section>
+      </Card>
 
       <button
         type="button"
         onClick={() => navigate("/items")}
         aria-label="Add new product"
-        className="fixed bottom-8 right-8 w-14 h-14 bg-secondary text-on-secondary rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(70,72,212,0.4)] hover:scale-110 active:scale-95 transition-all z-50"
+        className="fixed bottom-8 right-8 w-14 h-14 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center shadow-lg hover:bg-secondary/90 transition-colors z-50"
       >
-        <Icon name="add" size={28} filled />
+        <Icon name="add" size={24} filled />
       </button>
     </div>
   );
@@ -223,60 +197,37 @@ function StatCard({
   value,
   icon,
   tone,
-  path,
   footer,
 }: {
   label: string;
   value: string;
   icon: string;
   tone: "primary" | "secondary" | "tertiary";
-  path: string;
   footer: React.ReactNode;
 }) {
   const toneIconBg =
     tone === "secondary"
-      ? "bg-secondary-fixed text-secondary"
+      ? "bg-secondary/10 text-secondary"
       : tone === "tertiary"
-        ? "bg-tertiary-fixed text-tertiary"
-        : "bg-primary-container text-primary";
-
-  const toneStroke =
-    tone === "secondary"
-      ? "stroke-secondary"
-      : tone === "tertiary"
-        ? "stroke-tertiary"
-        : "stroke-primary";
-
-  const toneFooter =
-    tone === "secondary"
-      ? "text-on-secondary-fixed-variant"
-      : tone === "tertiary"
-        ? "text-on-tertiary-fixed-variant"
-        : "text-on-primary-fixed-variant";
+        ? "bg-accent/10 text-accent"
+        : "bg-primary/10 text-primary";
 
   return (
-    <div className="neu-raised p-4 rounded-xl hover:scale-[1.02] transition-transform">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-            {label}
-          </p>
-          <h3 className="text-2xl font-semibold text-on-surface mt-1">{value}</h3>
+    <Card>
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {label}
+            </p>
+            <h3 className="text-2xl font-semibold text-foreground mt-1">{value}</h3>
+          </div>
+          <div className={cn("p-2 rounded-lg", toneIconBg)}>
+            <Icon name={icon} size={20} />
+          </div>
         </div>
-        <div className={cn("p-2 rounded-lg", toneIconBg)}>
-          <Icon name={icon} size={22} />
-        </div>
-      </div>
-      <div className="h-12 w-full opacity-40">
-        <svg
-          className={cn("w-full h-full fill-none stroke-2", toneStroke)}
-          viewBox="0 0 100 20"
-          preserveAspectRatio="none"
-        >
-          <path d={path} />
-        </svg>
-      </div>
-      <p className={cn("text-xs mt-2 flex items-center gap-1", toneFooter)}>{footer}</p>
-    </div>
+        <p className="text-xs text-muted-foreground flex items-center gap-1">{footer}</p>
+      </CardContent>
+    </Card>
   );
 }

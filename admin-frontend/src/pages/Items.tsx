@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table";
@@ -17,8 +17,11 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { Pagination } from "@/components/shared/Pagination";
 import { apiFetch } from "@/lib/api";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, iconButtonTrigger } from "@/lib/utils";
 
 type ProductStatus = "in_stock" | "out_of_stock" | "discontinued";
 
@@ -87,17 +90,17 @@ export default function Items() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Items</CardTitle>
-            <CardDescription>Products available in the storefront catalog</CardDescription>
-          </div>
+      <PageHeader
+        title="Items"
+        description="Products available in the storefront catalog"
+        actions={
           <Button onClick={() => setCreateOpen(true)}>
             <Plus className="h-4 w-4" /> Add Item
           </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        }
+      />
+      <Card>
+        <CardContent className="space-y-4 pt-6">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -156,7 +159,7 @@ export default function Items() {
                       <TableCell><Badge variant={s.variant}>{s.label}</Badge></TableCell>
                       <TableCell>
                         <DropdownMenu>
-                          <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
+                          <DropdownMenuTrigger className={iconButtonTrigger}>
                             <MoreHorizontal className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -173,23 +176,8 @@ export default function Items() {
             </Table>
           </div>
 
-          {data && data.total > data.page_size && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                Page {data.page} of {Math.max(1, Math.ceil(data.total / data.page_size))}
-              </span>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>Previous</Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={page * data.page_size >= data.total}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+          {data && (
+            <Pagination page={page} pageSize={data.page_size} total={data.total} onPageChange={setPage} />
           )}
         </CardContent>
       </Card>
@@ -209,24 +197,16 @@ export default function Items() {
           onSaved={() => { setEditing(null); invalidate(); }}
         />
       )}
-      <Dialog open={!!deleting} onOpenChange={(v) => { if (!v) setDeleting(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete {deleting?.name}?</DialogTitle>
-            <DialogDescription>This permanently removes the product.</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleting(null)}>Cancel</Button>
-            <Button
-              variant="destructive"
-              disabled={deleteMutation.isPending}
-              onClick={() => deleting && deleteMutation.mutate(deleting.id)}
-            >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={!!deleting}
+        title={`Delete ${deleting?.name}?`}
+        description="This permanently removes the product."
+        confirmLabel="Delete"
+        confirmVariant="destructive"
+        onCancel={() => setDeleting(null)}
+        onConfirm={() => deleting && deleteMutation.mutate(deleting.id)}
+        isPending={deleteMutation.isPending}
+      />
     </div>
   );
 }
@@ -339,7 +319,7 @@ function ProductDialog({
           <div className="space-y-1.5">
             <Label>Status</Label>
             <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               value={state.status}
               onChange={(e) => set("status", e.target.value as ProductStatus)}
             >
@@ -351,7 +331,7 @@ function ProductDialog({
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Description</Label>
             <textarea
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               value={state.description}
               onChange={(e) => set("description", e.target.value)}
             />
@@ -359,7 +339,7 @@ function ProductDialog({
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Image URLs (one per line)</Label>
             <textarea
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono text-xs"
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               value={state.image_urls}
               onChange={(e) => set("image_urls", e.target.value)}
               placeholder="https://example.com/image1.jpg"

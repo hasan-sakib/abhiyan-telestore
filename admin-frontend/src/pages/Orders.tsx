@@ -3,17 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { Pagination } from "@/components/shared/Pagination";
 import { apiFetch } from "@/lib/api";
-import { formatDate, formatPrice } from "@/lib/utils";
-
-type OrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+import { formatDate, formatPrice, iconButtonTrigger, orderStatusVariant, type OrderStatus } from "@/lib/utils";
 
 interface Order {
   id: number;
@@ -37,13 +37,6 @@ const transitions: Record<OrderStatus, OrderStatus[]> = {
   shipped: ["delivered"],
   delivered: [],
   cancelled: [],
-};
-
-const variantFor = (s: OrderStatus): "default" | "success" | "warning" | "destructive" | "secondary" => {
-  if (s === "delivered") return "success";
-  if (s === "cancelled") return "destructive";
-  if (s === "pending") return "warning";
-  return "secondary";
 };
 
 export default function Orders() {
@@ -71,12 +64,9 @@ export default function Orders() {
 
   return (
     <div className="space-y-6">
+      <PageHeader title="Orders" description="Track and manage customer orders" />
       <Card>
-        <CardHeader>
-          <CardTitle>Orders</CardTitle>
-          <CardDescription>Track and manage customer orders</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="flex flex-wrap gap-2">
             {filters.map((f) => (
               <Button
@@ -117,11 +107,11 @@ export default function Orders() {
                         {o.shipping_address.full_name ?? `User #${o.user_id}`}
                       </TableCell>
                       <TableCell>{formatPrice(o.total_amount)}</TableCell>
-                      <TableCell><Badge variant={variantFor(o.status)} className="capitalize">{o.status}</Badge></TableCell>
+                      <TableCell><Badge variant={orderStatusVariant(o.status)} className="capitalize">{o.status}</Badge></TableCell>
                       <TableCell className="text-muted-foreground">{formatDate(o.created_at)}</TableCell>
                       <TableCell>
                         <DropdownMenu>
-                          <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
+                          <DropdownMenuTrigger className={iconButtonTrigger}>
                             <MoreHorizontal className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -148,23 +138,8 @@ export default function Orders() {
             </Table>
           </div>
 
-          {data && data.total > data.page_size && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                Page {data.page} of {Math.max(1, Math.ceil(data.total / data.page_size))}
-              </span>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>Previous</Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={page * data.page_size >= data.total}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+          {data && (
+            <Pagination page={page} pageSize={data.page_size} total={data.total} onPageChange={setPage} />
           )}
         </CardContent>
       </Card>

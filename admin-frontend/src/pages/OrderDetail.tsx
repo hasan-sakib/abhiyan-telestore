@@ -9,10 +9,9 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { apiFetch } from "@/lib/api";
-import { formatDate, formatPrice } from "@/lib/utils";
-
-type OrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+import { formatDate, formatPrice, orderStatusVariant, type OrderStatus } from "@/lib/utils";
 
 interface ShippingAddress {
   full_name: string;
@@ -51,13 +50,6 @@ const transitions: Record<OrderStatus, OrderStatus[]> = {
   cancelled: [],
 };
 
-const variantFor = (s: OrderStatus): "default" | "success" | "warning" | "destructive" | "secondary" => {
-  if (s === "delivered") return "success";
-  if (s === "cancelled") return "destructive";
-  if (s === "pending") return "warning";
-  return "secondary";
-};
-
 export default function OrderDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -93,32 +85,39 @@ export default function OrderDetail() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button variant="outline" size="sm" onClick={() => navigate("/orders")}>
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back
-        </Button>
-        <h1 className="text-xl font-semibold">Order #{order.id}</h1>
-        <Badge variant={variantFor(order.status)} className="capitalize">{order.status}</Badge>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" disabled={next.length === 0} className="ml-auto">
-              Update Status
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {next.map((s) => (
-              <DropdownMenuItem
-                key={s}
-                variant={s === "cancelled" ? "destructive" : "default"}
-                onSelect={() => updateMutation.mutate(s)}
-                className="capitalize"
-              >
-                Mark as {s}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <Button variant="outline" size="sm" onClick={() => navigate("/orders")} className="w-fit">
+        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+      </Button>
+
+      <PageHeader
+        title={
+          <span className="flex items-center gap-3">
+            Order #{order.id}
+            <Badge variant={orderStatusVariant(order.status)} className="capitalize">{order.status}</Badge>
+          </span>
+        }
+        actions={
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={next.length === 0}>
+                Update Status
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {next.map((s) => (
+                <DropdownMenuItem
+                  key={s}
+                  variant={s === "cancelled" ? "destructive" : "default"}
+                  onSelect={() => updateMutation.mutate(s)}
+                  className="capitalize"
+                >
+                  Mark as {s}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -149,8 +148,9 @@ export default function OrderDetail() {
                 </TableBody>
               </Table>
             </div>
-            <div className="flex justify-end mt-4">
-              <span className="text-sm font-semibold">Total: {formatPrice(order.total_amount)}</span>
+            <div className="flex justify-end items-baseline gap-2 mt-4 pt-4 border-t border-border">
+              <span className="text-sm text-muted-foreground">Total</span>
+              <span className="text-xl font-bold text-foreground">{formatPrice(order.total_amount)}</span>
             </div>
           </CardContent>
         </Card>

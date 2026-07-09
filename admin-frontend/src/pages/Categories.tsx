@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
@@ -13,7 +13,10 @@ import {
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { apiFetch } from "@/lib/api";
+import { iconButtonTrigger } from "@/lib/utils";
 
 interface Category {
   id: number;
@@ -45,17 +48,17 @@ export default function Categories() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle>Categories</CardTitle>
-            <CardDescription>Organize your product catalog</CardDescription>
-          </div>
+      <PageHeader
+        title="Categories"
+        description="Organize your product catalog"
+        actions={
           <Button onClick={() => setCreateOpen(true)}>
             <Plus className="h-4 w-4" /> Add Category
           </Button>
-        </CardHeader>
-        <CardContent>
+        }
+      />
+      <Card>
+        <CardContent className="pt-6">
           <div className="rounded-md border overflow-hidden">
             <Table>
               <TableHeader>
@@ -78,7 +81,7 @@ export default function Categories() {
                     <TableCell className="text-muted-foreground max-w-md truncate">{c.description ?? "—"}</TableCell>
                     <TableCell>
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-muted">
+                        <DropdownMenuTrigger className={iconButtonTrigger}>
                           <MoreHorizontal className="h-4 w-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -111,24 +114,16 @@ export default function Categories() {
           onSaved={() => { setEditing(null); invalidate(); }}
         />
       )}
-      <Dialog open={!!deleting} onOpenChange={(v) => { if (!v) setDeleting(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete {deleting?.name}?</DialogTitle>
-            <DialogDescription>This will remove the category. Existing products keep their assignment.</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleting(null)}>Cancel</Button>
-            <Button
-              variant="destructive"
-              disabled={deleteMutation.isPending}
-              onClick={() => deleting && deleteMutation.mutate(deleting.id)}
-            >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={!!deleting}
+        title={`Delete ${deleting?.name}?`}
+        description="This will remove the category. Existing products keep their assignment."
+        confirmLabel="Delete"
+        confirmVariant="destructive"
+        onCancel={() => setDeleting(null)}
+        onConfirm={() => deleting && deleteMutation.mutate(deleting.id)}
+        isPending={deleteMutation.isPending}
+      />
     </div>
   );
 }
@@ -170,7 +165,7 @@ function CategoryDialog({
           <div className="space-y-1.5">
             <Label>Description</Label>
             <textarea
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />

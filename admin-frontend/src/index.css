@@ -23,6 +23,7 @@
     --destructive: #ba1a1a;
     --destructive-foreground: #ffffff;
     --success: #16a34a;
+    --warning: #b45309;
     --border: #c4c7c8;
     --input: #ebe7e7;
     --ring: #4648d4;
@@ -90,6 +91,7 @@
     --destructive: #ffb4ab;
     --destructive-foreground: #690005;
     --success: #4ade80;
+    --warning: #fbbf24;
     --border: #464554;
     --input: #2d3449;
     --ring: #c0c1ff;
@@ -157,6 +159,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -213,8 +216,8 @@
   html,
   body {
     margin: 0;
-    background-color: var(--surface);
-    color: var(--on-surface);
+    background-color: var(--background);
+    color: var(--foreground);
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
