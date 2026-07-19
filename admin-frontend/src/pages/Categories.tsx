@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { ImageUploadField } from "@/components/shared/ImageUploadField";
 import { apiFetch } from "@/lib/api";
 import { iconButtonTrigger } from "@/lib/utils";
 
@@ -171,8 +172,8 @@ function CategoryDialog({
             />
           </div>
           <div className="space-y-1.5">
-            <Label>Image URL</Label>
-            <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+            <Label>Image</Label>
+            <ImageUploadField value={imageUrl} onChange={setImageUrl} />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>

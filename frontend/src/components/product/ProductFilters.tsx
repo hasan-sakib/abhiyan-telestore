@@ -5,10 +5,12 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
+import { useBrands } from "@/hooks/useProducts";
 
 export interface FilterState {
   search: string;
   category_id: string;
+  brand: string;
   min_price: string;
   max_price: string;
   in_stock: boolean;
@@ -22,15 +24,19 @@ interface ProductFiltersProps {
 
 export function ProductFilters({ filters, onChange }: ProductFiltersProps) {
   const { data: categoriesData } = useCategories();
-  const categories = categoriesData?.items ?? [];
+  const categories = categoriesData ?? [];
+  const { data: brands } = useBrands(filters.category_id ? Number(filters.category_id) : undefined);
 
   const set = (key: keyof FilterState, value: string | boolean) =>
     onChange({ ...filters, [key]: value });
 
-  const clearAll = () =>
-    onChange({ search: "", category_id: "", min_price: "", max_price: "", in_stock: false, featured: false });
+  const setCategory = (category_id: string) =>
+    onChange({ ...filters, category_id, brand: "" });
 
-  const hasFilters = filters.search || filters.category_id || filters.min_price ||
+  const clearAll = () =>
+    onChange({ search: "", category_id: "", brand: "", min_price: "", max_price: "", in_stock: false, featured: false });
+
+  const hasFilters = filters.search || filters.category_id || filters.brand || filters.min_price ||
     filters.max_price || filters.in_stock || filters.featured;
 
   return (
@@ -63,7 +69,7 @@ export function ProductFilters({ filters, onChange }: ProductFiltersProps) {
           <Badge
             variant={filters.category_id === "" ? "default" : "outline"}
             className="cursor-pointer"
-            onClick={() => set("category_id", "")}
+            onClick={() => setCategory("")}
           >
             All
           </Badge>
@@ -72,13 +78,41 @@ export function ProductFilters({ filters, onChange }: ProductFiltersProps) {
               key={cat.id}
               variant={filters.category_id === String(cat.id) ? "default" : "outline"}
               className="cursor-pointer"
-              onClick={() => set("category_id", String(cat.id))}
+              onClick={() => setCategory(String(cat.id))}
             >
               {cat.name}
             </Badge>
           ))}
         </div>
       </div>
+
+      {!!brands?.length && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Brand</Label>
+            <div className="flex flex-wrap gap-1.5">
+              <Badge
+                variant={filters.brand === "" ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => set("brand", "")}
+              >
+                All
+              </Badge>
+              {brands.map((brand) => (
+                <Badge
+                  key={brand}
+                  variant={filters.brand === brand ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => set("brand", brand)}
+                >
+                  {brand}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       <Separator />
 

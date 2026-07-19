@@ -20,6 +20,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Pagination } from "@/components/shared/Pagination";
+import { ImageUploadList } from "@/components/shared/ImageUploadList";
 import { apiFetch } from "@/lib/api";
 import { formatPrice, iconButtonTrigger } from "@/lib/utils";
 
@@ -221,7 +222,7 @@ interface ProductFormState {
   model: string;
   status: ProductStatus;
   is_featured: boolean;
-  image_urls: string;
+  image_urls: string[];
 }
 
 function toFormState(p?: Product): ProductFormState {
@@ -235,7 +236,7 @@ function toFormState(p?: Product): ProductFormState {
     model: p?.model ?? "",
     status: p?.status ?? "in_stock",
     is_featured: p?.is_featured ?? false,
-    image_urls: p?.images.map((i) => i.url).join("\n") ?? "",
+    image_urls: p?.images.map((i) => i.url) ?? [],
   };
 }
 
@@ -261,10 +262,7 @@ function ProductDialog({
         model: state.model || null,
         status: state.status,
         is_featured: state.is_featured,
-        image_urls: state.image_urls
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean),
+        image_urls: state.image_urls,
       };
       if (mode === "create") {
         return apiFetch("/api/v1/products/", { method: "POST", body: payload });
@@ -337,13 +335,8 @@ function ProductDialog({
             />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <Label>Image URLs (one per line)</Label>
-            <textarea
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              value={state.image_urls}
-              onChange={(e) => set("image_urls", e.target.value)}
-              placeholder="https://example.com/image1.jpg"
-            />
+            <Label>Images</Label>
+            <ImageUploadList value={state.image_urls} onChange={(urls) => set("image_urls", urls)} />
           </div>
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
             <Checkbox checked={state.is_featured} onChange={(e) => set("is_featured", (e.target as HTMLInputElement).checked)} />

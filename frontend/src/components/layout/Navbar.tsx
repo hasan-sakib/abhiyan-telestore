@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Search, ShoppingCart, User, Menu, X, Heart,
-  ChevronDown, Smartphone, Laptop, Tablet, Watch,
-  Headphones, Plug, Zap, Tag,
+  ChevronDown, Zap, Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,16 +16,9 @@ import {
 import { DarkModeToggle } from "@/components/shared/DarkModeToggle";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
+import { useCategories } from "@/hooks/useCategories";
+import { pickCategoryIcon } from "@/lib/categoryIcons";
 import { useLogout } from "@/hooks/useAuth";
-
-const CATEGORY_LINKS = [
-  { to: "/products?category=smartphones", label: "Smartphones", icon: Smartphone },
-  { to: "/products?category=laptops", label: "Laptops", icon: Laptop },
-  { to: "/products?category=tablets", label: "Tablets", icon: Tablet },
-  { to: "/products?category=smartwatch", label: "Smart Watch", icon: Watch },
-  { to: "/products?category=audio", label: "Audio", icon: Headphones },
-  { to: "/products?category=accessories", label: "Accessories", icon: Plug },
-];
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -44,6 +36,8 @@ export function Navbar() {
   const [search, setSearch] = useState("");
   const [megaOpen, setMegaOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { data: categoriesData } = useCategories();
+  const categoryLinks = (categoriesData ?? []).filter((c) => !c.parent_id);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -122,16 +116,19 @@ export function Navbar() {
               {megaOpen && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-popover border border-border rounded-lg p-2 shadow-lg">
                   <div className="grid grid-cols-2 gap-0.5">
-                    {CATEGORY_LINKS.map(({ to, label, icon: Icon }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-muted transition-colors group"
-                      >
-                        <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                        <span className="text-sm font-medium text-foreground">{label}</span>
-                      </Link>
-                    ))}
+                    {categoryLinks.map((cat) => {
+                      const Icon = pickCategoryIcon(cat.name);
+                      return (
+                        <Link
+                          key={cat.id}
+                          to={`/products?category_id=${cat.id}`}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-muted transition-colors group"
+                        >
+                          <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                          <span className="text-sm font-medium text-foreground">{cat.name}</span>
+                        </Link>
+                      );
+                    })}
                   </div>
                   <div className="mt-1.5 pt-1.5 border-t border-border">
                     <Link
@@ -281,17 +278,20 @@ export function Navbar() {
                 ))}
                 <div className="mt-1 pt-1 border-t border-border">
                   <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider label-overline">Categories</p>
-                  {CATEGORY_LINKS.map(({ to, label, icon: Icon }) => (
-                    <Link
-                      key={to}
-                      to={to}
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
-                    >
-                      <Icon className="h-4 w-4" />
-                      {label}
-                    </Link>
-                  ))}
+                  {categoryLinks.map((cat) => {
+                    const Icon = pickCategoryIcon(cat.name);
+                    return (
+                      <Link
+                        key={cat.id}
+                        to={`/products?category_id=${cat.id}`}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-3 py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
+                      >
+                        <Icon className="h-4 w-4" />
+                        {cat.name}
+                      </Link>
+                    );
+                  })}
                 </div>
                 {!isAuthenticated && (
                   <Link

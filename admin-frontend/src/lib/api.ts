@@ -50,3 +50,32 @@ export async function apiFetch<T = unknown>(
   if (res.status === 204) return undefined as T;
   return res.json();
 }
+
+export async function uploadFile<T = unknown>(path: string, file: File): Promise<T> {
+  const headers: Record<string, string> = {};
+  const token = useAuthStore.getState().accessToken;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+  if (res.status === 401) {
+    useAuthStore.getState().logout();
+  }
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      const data = await res.json();
+      detail = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail ?? data);
+    } catch {
+      // ignore
+    }
+    throw new ApiError(res.status, detail);
+  }
+  return res.json();
+}

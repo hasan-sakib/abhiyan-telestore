@@ -49,6 +49,16 @@ export function useProducts(filters: ProductFilters = {}) {
   });
 }
 
+export function useBrands(categoryId?: number) {
+  const params = new URLSearchParams();
+  if (categoryId) params.set("category_id", String(categoryId));
+  return useQuery<string[]>({
+    queryKey: ["brands", categoryId],
+    queryFn: () => apiFetch(`/api/v1/products/brands?${params}`),
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
 export function useProduct(slug: string) {
   return useQuery<Product>({
     queryKey: ["product", "slug", slug],

@@ -75,6 +75,65 @@ def test_filter_products_by_category(client, sample_product, sample_category):
     assert response.json()["total"] >= 1
 
 
+def test_filter_products_by_category_id(client, sample_product, sample_category):
+    response = client.get(f"/api/v1/products/?category_id={sample_category.id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] >= 1
+    assert all(p["category_id"] == sample_category.id for p in data["items"])
+
+
+def test_filter_products_by_category_id_excludes_other_categories(client, sample_product, db):
+    from app.models.category import Category
+    from app.models.product import Product
+
+    other_category = Category(name="Other", slug="other")
+    db.add(other_category)
+    db.commit()
+    db.refresh(other_category)
+
+    other_product = Product(name="Other Product", slug="other-product", price=50.0, stock_quantity=5, category_id=other_category.id)
+    db.add(other_product)
+    db.commit()
+
+    response = client.get(f"/api/v1/products/?category_id={other_category.id}")
+    assert response.status_code == 200
+    data = response.json()
+    names = [p["name"] for p in data["items"]]
+    assert "Other Product" in names
+    assert sample_product.name not in names
+
+
+def test_list_brands_scoped_to_category(client, sample_product, sample_category, db):
+    from app.models.category import Category
+    from app.models.product import Product
+
+    other_category = Category(name="Laptops", slug="laptops")
+    db.add(other_category)
+    db.commit()
+    db.refresh(other_category)
+
+    same_category_other_brand = Product(
+        name="Xiaomi 14", slug="xiaomi-14", price=699.99, stock_quantity=5,
+        category_id=sample_category.id, brand="Xiaomi",
+    )
+    other_category_product = Product(
+        name="Dell XPS", slug="dell-xps", price=1299.99, stock_quantity=5,
+        category_id=other_category.id, brand="Dell",
+    )
+    db.add(same_category_other_brand)
+    db.add(other_category_product)
+    db.commit()
+
+    response = client.get(f"/api/v1/products/brands?category_id={sample_category.id}")
+    assert response.status_code == 200
+    assert response.json() == ["Samsung", "Xiaomi"]
+
+    response = client.get("/api/v1/products/brands")
+    assert response.status_code == 200
+    assert set(response.json()) == {"Samsung", "Xiaomi", "Dell"}
+
+
 def test_search_products(client, sample_product):
     response = client.get("/api/v1/products/?search=Samsung")
     assert response.status_code == 200

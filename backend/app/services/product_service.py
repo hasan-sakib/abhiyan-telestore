@@ -28,6 +28,7 @@ class ProductService:
         self,
         page: int,
         page_size: int,
+        category_id: Optional[int] = None,
         category_slug: Optional[str] = None,
         search: Optional[str] = None,
         min_price: Optional[float] = None,
@@ -40,6 +41,8 @@ class ProductService:
 
         if search:
             query = query.where(Product.name.ilike(f"%{search}%"))
+        if category_id is not None:
+            query = query.where(Product.category_id == category_id)
         if category_slug:
             query = query.join(Category).where(Category.slug == category_slug)
         if min_price is not None:
@@ -58,6 +61,13 @@ class ProductService:
         items = self.db.exec(query.offset((page - 1) * page_size).limit(page_size)).all()
 
         return ProductListResponse(items=items, total=total, page=page, page_size=page_size)
+
+    def list_brands(self, category_id: Optional[int] = None) -> list[str]:
+        query = select(Product.brand).distinct().where(Product.brand.is_not(None))
+        if category_id is not None:
+            query = query.where(Product.category_id == category_id)
+        brands = self.db.exec(query.order_by(Product.brand)).all()
+        return list(brands)
 
     def create(self, payload: ProductCreate) -> Product:
         image_urls = payload.image_urls or []

@@ -13,6 +13,7 @@ router = APIRouter(prefix="/products", tags=["products"])
 def list_products(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    category_id: Optional[int] = None,
     category_slug: Optional[str] = None,
     search: Optional[str] = None,
     min_price: Optional[float] = None,
@@ -25,6 +26,7 @@ def list_products(
     return ProductService(db).list_products(
         page=page,
         page_size=page_size,
+        category_id=category_id,
         category_slug=category_slug,
         search=search,
         min_price=min_price,
@@ -33,6 +35,14 @@ def list_products(
         is_featured=is_featured,
         status=status,
     )
+
+
+@router.get("/brands", response_model=list[str])
+def list_brands(
+    category_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    return ProductService(db).list_brands(category_id=category_id)
 
 
 @router.get("/{slug}", response_model=ProductRead)

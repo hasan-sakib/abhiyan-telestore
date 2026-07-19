@@ -20,6 +20,7 @@ export default function ProductListing() {
   const [filters, setFilters] = useState<FilterState>({
     search: searchParams.get("search") ?? "",
     category_id: searchParams.get("category_id") ?? "",
+    brand: searchParams.get("brand") ?? "",
     min_price: searchParams.get("min_price") ?? "",
     max_price: searchParams.get("max_price") ?? "",
     in_stock: searchParams.get("in_stock") === "true",
@@ -31,6 +32,7 @@ export default function ProductListing() {
   const queryParams = {
     search: debouncedSearch || undefined,
     category_id: filters.category_id ? Number(filters.category_id) : undefined,
+    brand: filters.brand || undefined,
     min_price: filters.min_price ? Number(filters.min_price) : undefined,
     max_price: filters.max_price ? Number(filters.max_price) : undefined,
     in_stock: filters.in_stock || undefined,
@@ -51,12 +53,20 @@ export default function ProductListing() {
     const p: Record<string, string> = {};
     if (filters.search) p.search = filters.search;
     if (filters.category_id) p.category_id = filters.category_id;
+    if (filters.brand) p.brand = filters.brand;
     if (filters.min_price) p.min_price = filters.min_price;
     if (filters.max_price) p.max_price = filters.max_price;
     if (filters.in_stock) p.in_stock = "true";
     if (filters.featured) p.featured = "true";
     setSearchParams(p, { replace: true });
   }, [filters]);
+
+  // Re-sync category filter if the URL changes externally (e.g. a navbar/category
+  // link navigated here while this page was already mounted).
+  useEffect(() => {
+    const urlCategoryId = searchParams.get("category_id") ?? "";
+    setFilters((f) => (f.category_id === urlCategoryId ? f : { ...f, category_id: urlCategoryId }));
+  }, [searchParams]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">

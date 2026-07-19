@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/hooks/useProducts";
-import type { Category, PaginatedResponse } from "@/types";
+import type { Category } from "@/types";
 
 export function useCategories() {
-  return useQuery<PaginatedResponse<Category>>({
+  return useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: () => apiFetch("/api/v1/categories/"),
     staleTime: 1000 * 60 * 5,
